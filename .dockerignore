@@ -18,3 +18,4 @@ Makefile
 .python-version
 Dockerfile
 docs/
+.github/workflows/
