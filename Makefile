@@ -75,6 +75,15 @@ destroy-prod: ## Destroy prod
 
 
 # =====================================
+# Local Website
+# =====================================
+gh: ## Serve GitHub Pages locally
+	@echo "🌐 Starting local server at http://localhost:8000"
+	@echo "📁 Serving docs/ folder"
+	@echo "Press Ctrl+C to stop"
+	@cd docs && python3 -m http.server 8000
+
+# =====================================
 # 📚 Documentation & Help
 # =====================================
 

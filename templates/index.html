@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Salutron - AI Greeter</title>
+    <meta name="description" content="Learning Terraform, Docker & AWS through AI-powered greetings">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="emoji">👋</div>
+        <h1>{{ greeting }}</h1>
+
+        <div class="buttons">
+            <button class="btn btn-primary" onclick="location.reload()">
+                ✨ Another Greeting
+            </button>
+            <a href="https://github.com/lisekarimi/salutron" target="_blank" class="btn btn-secondary">
+                💻 View Code on GitHub
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Built with Terraform 🏗️ · Docker 🐳 · AWS ☁️ · OpenAI 🤖</p>
+            <p style="margin-top: 10px;">A learning project by <strong>Lise Karimi</strong></p>
+        </div>
+    </div>
+</body>
+</html>

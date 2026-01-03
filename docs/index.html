@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salutron - Learning Terraform & AWS</title>
+    <meta name="description" content="AI-powered greeting app built to learn Terraform, Docker, and AWS infrastructure">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👋</text></svg>">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-emoji">👋</div>
+        <h1>Salutron</h1>
+        <p>Production-ready DevOps project demonstrating Terraform, Docker, and AWS deployment with enterprise-level automation</p>
+        <div class="cta-buttons">
+            <a href="https://github.com/lisekarimi/salutron" class="btn btn-primary" target="_blank">
+                💻 View on GitHub
+            </a>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- About Section -->
+        <section class="section">
+            <h2>About This Project</h2>
+            <p>
+                A professional DevOps project built to master Terraform, Docker, and AWS deployment.<br>
+                This project demonstrates enterprise-level Infrastructure as Code practices with full automation and multi-environment support.
+            </p>
+        </section>
+
+        <!-- Key Features - NEW SECTION -->
+        <section class="section">
+            <h2>🚀 Key Professional Features</h2>
+            <div class="features">
+                <div class="feature highlight">
+                    <h3>🏗️ Multi-Environment Infrastructure</h3>
+                    <ul>
+                        <li>3 isolated environments (dev/test/prod)</li>
+                        <li>Terraform workspaces for state management</li>
+                        <li>One codebase, multiple deployments</li>
+                        <li>Production-ready architecture</li>
+                    </ul>
+                </div>
+                <div class="feature highlight">
+                    <h3>⚡ One-Command Deployment</h3>
+                    <ul>
+                        <li><code>make deploy-dev</code> - Complete deployment</li>
+                        <li><code>make destroy-dev</code> - Complete teardown</li>
+                        <li>Fully automated: build → push → deploy</li>
+                        <li>Zero manual AWS Console interaction</li>
+                    </ul>
+                </div>
+                <div class="feature highlight">
+                    <h3>🔧 Enterprise Automation</h3>
+                    <ul>
+                        <li>Bash scripts for deployment orchestration</li>
+                        <li>Makefile for developer experience</li>
+                        <li>End-to-end CI/CD workflow</li>
+                        <li>Repeatable and consistent deployments</li>
+                    </ul>
+                </div>
+                <div class="feature highlight">
+                    <h3>🔐 Secure Secret Management</h3>
+                    <ul>
+                        <li>Environment variables via .env files</li>
+                        <li>Secrets never committed to Git</li>
+                        <li>Terraform sensitive variables</li>
+                        <li>Production-grade security practices</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Stack -->
+        <section class="section">
+            <h2>Tech Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="icon">🏗️</div>
+                    <h3>Terraform</h3>
+                    <p>Infrastructure as Code with multi-environment workspaces (dev/test/prod)</p>
+                </div>
+                <div class="tech-card">
+                    <div class="icon">🐳</div>
+                    <h3>Docker</h3>
+                    <p>Containerized application with optimized builds using UV</p>
+                </div>
+                <div class="tech-card">
+                    <div class="icon">☁️</div>
+                    <h3>AWS App Runner</h3>
+                    <p>Serverless container deployment with auto-scaling and HTTPS</p>
+                </div>
+                <div class="tech-card">
+                    <div class="icon">🤖</div>
+                    <h3>OpenAI GPT-4</h3>
+                    <p>AI-powered greetings that are unique every time</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- What I Learned -->
+        <section class="section">
+            <h2>What I Learned</h2>
+            <div class="features">
+                <div class="feature">
+                    <h3>🏗️ Infrastructure as Code</h3>
+                    <ul>
+                        <li>Terraform workspace management</li>
+                        <li>Multi-environment deployments</li>
+                        <li>Resource dependencies & outputs</li>
+                        <li>State management best practices</li>
+                    </ul>
+                </div>
+                <div class="feature">
+                    <h3>🐳 Containerization</h3>
+                    <ul>
+                        <li>Docker multi-stage builds</li>
+                        <li>ECR repository management</li>
+                        <li>Image optimization techniques</li>
+                        <li>Container security practices</li>
+                    </ul>
+                </div>
+                <div class="feature">
+                    <h3>☁️ AWS Services</h3>
+                    <ul>
+                        <li>App Runner for serverless containers</li>
+                        <li>ECR for container registry</li>
+                        <li>S3 for object storage (learning)</li>
+                        <li>IAM roles and permissions</li>
+                    </ul>
+                </div>
+                <div class="feature">
+                    <h3>🔧 DevOps Automation</h3>
+                    <ul>
+                        <li>Bash scripting for deployment orchestration</li>
+                        <li>Makefile for command automation</li>
+                        <li>Secret management with env variables</li>
+                        <li>Git workflow and version control</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section class="section">
+            <h2>Architecture & Deployment</h2>
+            <p>
+                Complete automated deployment workflow - from code to production in one command:
+            </p>
+            <div class="architecture-flow">
+                <div class="feature">
+                    <h3>🔄 Automated Deployment Flow</h3>
+                    <ul>
+                        <li>Build Docker image with Python + Flask + OpenAI</li>
+                        <li>Login to ECR and push container image</li>
+                        <li>Terraform creates infrastructure (App Runner, ECR, IAM, S3*)</li>
+                        <li>App Runner pulls image and deploys automatically</li>
+                        <li>Auto-scaling (1-2 instances) based on traffic</li>
+                        <li>HTTPS endpoint configured automatically</li>
+                    </ul>
+                    <p style="font-size: 0.9em; color: #888; margin-top: 15px;">
+                        *S3 bucket created for learning Terraform resource management
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; <strong>Lise Karimi</strong></p>
+        <p class="footer-links">
+            Built with ❤️ while learning DevOps
+        </p>
+        <div class="footer-portfolio">
+            <a href="https://lisekarimi.com" target="_blank" class="btn btn-portfolio">
+                🌟 Visit Portfolio
+            </a>
+        </div>
+    </footer>
+</body>
+</html>
