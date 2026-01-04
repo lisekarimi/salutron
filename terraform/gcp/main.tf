@@ -122,19 +122,19 @@ resource "google_cloud_run_v2_service_iam_member" "public_access" {
 # ==========================================
 # Custom Domain Mapping (Production Only)
 # ==========================================
-resource "google_cloud_run_domain_mapping" "custom_domain" {
-  count    = var.custom_domain != "" ? 1 : 0
-  name     = var.custom_domain
-  location = var.gcp_region
+# resource "google_cloud_run_domain_mapping" "custom_domain" {
+#   count    = var.custom_domain != "" ? 1 : 0
+#   name     = var.custom_domain
+#   location = var.gcp_region
 
-  metadata {
-    namespace = var.project_id
-  }
+#   metadata {
+#     namespace = var.project_id
+#   }
 
-  spec {
-    route_name = google_cloud_run_v2_service.app.name
-  }
-}
+#   spec {
+#     route_name = google_cloud_run_v2_service.app.name
+#   }
+# }
 
 # ==========================================
 # Monitoring - Notification Channel

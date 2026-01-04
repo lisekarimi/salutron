@@ -28,11 +28,11 @@ variable "openai_api_key" {
   sensitive   = true
 }
 
-variable "custom_domain" {
-  description = "Custom domain for the application (prod only)"
-  type        = string
-  default     = ""
-}
+# variable "custom_domain" {
+#   description = "Custom domain for the application (prod only)"
+#   type        = string
+#   default     = ""
+# }
 
 variable "min_instances" {
   description = "Minimum number of instances for auto-scaling"

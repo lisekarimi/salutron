@@ -102,17 +102,10 @@ echo ""
 echo "🎉 Deployment complete!"
 echo "📊 Check outputs above for Cloud Run URL"
 
-# Show custom domain instructions for prod
 if [ "$ENVIRONMENT" = "prod" ]; then
-  CUSTOM_DOMAIN=$(grep 'custom_domain' prod.tfvars 2>/dev/null | cut -d'"' -f2)
-  if [ ! -z "$CUSTOM_DOMAIN" ]; then
-    echo ""
-    echo "🌐 Custom Domain Setup Required:"
-    echo "1. Run: cd terraform/gcp && terraform output custom_domain_records"
-    echo "2. Add CNAME record to your DNS provider:"
-    echo "   Name: $CUSTOM_DOMAIN"
-    echo "   Target: ghs.googlehosted.com"
-    echo "3. Wait 5-10 minutes for DNS propagation"
-    echo "4. Your app will be available at: https://$CUSTOM_DOMAIN"
-  fi
+  echo ""
+  echo "🌐 To add custom domain:"
+  echo "1. Go to GCP Console → Cloud Run → salutron-prod-service"
+  echo "2. Custom domains tab → Add mapping"
+  echo "3. Follow the instructions"
 fi

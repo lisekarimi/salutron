@@ -20,21 +20,21 @@ output "storage_bucket_name" {
   description = "Cloud Storage bucket name"
 }
 
-output "custom_domain_status" {
-  value       = var.custom_domain != "" ? google_cloud_run_domain_mapping.custom_domain[0].status[0].conditions[0].type : "Not configured"
-  description = "Custom domain mapping status"
-}
+# output "custom_domain_status" {
+#   value       = var.custom_domain != "" ? google_cloud_run_domain_mapping.custom_domain[0].status[0].conditions[0].type : "Not configured"
+#   description = "Custom domain mapping status"
+# }
 
-output "custom_domain_records" {
-  value = var.custom_domain != "" ? {
-    type   = "CNAME"
-    name   = var.custom_domain
-    target = "ghs.googlehosted.com"
-  } : null
-  description = "DNS record to add for custom domain"
-}
+# output "custom_domain_records" {
+#   value = var.custom_domain != "" ? {
+#     type   = "CNAME"
+#     name   = var.custom_domain
+#     target = "ghs.googlehosted.com"
+#   } : null
+#   description = "DNS record to add for custom domain"
+# }
 
-output "custom_domain_url" {
-  value       = var.custom_domain != "" ? "https://${var.custom_domain}" : "No custom domain configured"
-  description = "Custom domain URL (if configured)"
-}
+# output "custom_domain_url" {
+#   value       = var.custom_domain != "" ? "https://${var.custom_domain}" : "No custom domain configured"
+#   description = "Custom domain URL (if configured)"
+# }
