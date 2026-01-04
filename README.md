@@ -33,6 +33,12 @@ make destroy-dev  # Complete teardown
 - Docker image optimization with UV
 - Zero manual AWS Console interaction
 
+### Production-Ready Configuration
+- Custom domain support (prod environment)
+- Environment-specific scaling (dev: 1-2, prod: 2-5 instances)
+- Production configuration via `prod.tfvars`
+- Automatic SSL/TLS certificate management
+
 ## 🛠️ Tech Stack
 
 | Technology | Purpose |
@@ -108,6 +114,32 @@ make destroy-dev
 
 That's it! The entire infrastructure is built and deployed automatically.
 
+## 🌐 Custom Domain Setup (Production)
+
+Production deployments support custom domains:
+
+1. **Update `terraform/aws/prod.tfvars`:**
+   ```hcl
+   custom_domain = "your-subdomain.yourdomain.com"
+   ```
+
+2. **Deploy to production:**
+   ```bash
+   make deploy-prod
+   ```
+
+3. **Get DNS records:**
+   ```bash
+   cd terraform/aws
+   terraform output custom_domain_dns_records
+   ```
+
+4. **Add CNAME records to your DNS provider** (Cloudflare, Route53, etc.)
+
+5. **Wait 5-10 minutes** for SSL certificate validation
+
+Your app will be available at your custom domain with automatic HTTPS!
+
 ## 🎓 What You'll Learn
 
 ### Infrastructure as Code
@@ -133,6 +165,8 @@ That's it! The entire infrastructure is built and deployed automatically.
 - Makefile automation
 - Secret management
 - CI/CD workflows
+- Custom domain configuration with SSL
+- Environment-specific resource scaling
 
 ## 📄 License
 

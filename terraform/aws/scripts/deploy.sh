@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# terraform/scripts/deploy.sh
+# terraform/aws/scripts/deploy.sh
 # This script is used to deploy the application to AWS App Runner
 
 set -e
@@ -16,7 +16,7 @@ echo "🚀 Starting full deployment to ${ENVIRONMENT}..."
 
 # Load secrets from .env
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
 if [ -f "$PROJECT_ROOT/.env" ]; then
   export $(grep -v '^#' $PROJECT_ROOT/.env | xargs)
@@ -30,7 +30,7 @@ fi
 # Step 1: Create ECR Repository
 # ==========================================
 echo "📦 Step 1/3: Creating ECR repository..."
-cd terraform
+cd "$SCRIPT_DIR/.."
 terraform init -input=false
 
 if ! terraform workspace list | grep -q "$ENVIRONMENT"; then
@@ -39,12 +39,23 @@ else
   terraform workspace select "$ENVIRONMENT"
 fi
 
-terraform apply \
-  -target=aws_ecr_repository.app_repo \
-  -var="environment=$ENVIRONMENT" \
-  -var="openai_api_key=$OPENAI_API_KEY" \
-  -auto-approve
-cd ..
+# Use prod.tfvars for production
+if [ "$ENVIRONMENT" = "prod" ]; then
+  terraform apply \
+    -target=aws_ecr_repository.app_repo \
+    -var-file=prod.tfvars \
+    -var="environment=$ENVIRONMENT" \
+    -var="openai_api_key=$OPENAI_API_KEY" \
+    -auto-approve
+else
+  terraform apply \
+    -target=aws_ecr_repository.app_repo \
+    -var="environment=$ENVIRONMENT" \
+    -var="openai_api_key=$OPENAI_API_KEY" \
+    -auto-approve
+fi
+
+cd "$PROJECT_ROOT"
 
 # ==========================================
 # Step 2: Build and Push Docker Image
@@ -69,11 +80,33 @@ echo "✅ Image pushed to ${ECR_URI}:latest"
 # Step 3: Deploy Full Infrastructure
 # ==========================================
 echo "☁️  Step 3/3: Deploying App Runner and full infrastructure..."
-cd terraform
-terraform apply \
-  -var="environment=$ENVIRONMENT" \
-  -var="openai_api_key=$OPENAI_API_KEY"
+cd "$SCRIPT_DIR/.."
+
+# Use prod.tfvars for production
+if [ "$ENVIRONMENT" = "prod" ]; then
+  terraform apply \
+    -var-file=prod.tfvars \
+    -var="environment=$ENVIRONMENT" \
+    -var="openai_api_key=$OPENAI_API_KEY" \
+    -auto-approve
+else
+  terraform apply \
+    -var="environment=$ENVIRONMENT" \
+    -var="openai_api_key=$OPENAI_API_KEY" \
+    -auto-approve
+fi
 
 echo ""
 echo "🎉 Deployment complete!"
 echo "📊 Check outputs above for App Runner URL"
+
+# Show custom domain instructions for prod
+if [ "$ENVIRONMENT" = "prod" ]; then
+  CUSTOM_DOMAIN=$(grep 'custom_domain' "$SCRIPT_DIR/../prod.tfvars" | cut -d'"' -f2)
+  echo ""
+  echo "🌐 Custom Domain Setup Required:"
+  echo "1. Run: cd terraform/aws && terraform output custom_domain_dns_records"
+  echo "2. Add the DNS records to Cloudflare"
+  echo "3. Wait 5-10 minutes for validation"
+  echo "4. Your app will be available at: ${CUSTOM_DOMAIN}"
+fi

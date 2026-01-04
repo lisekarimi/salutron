@@ -54,24 +54,24 @@ restart: clean dev ## Restart dev container
 # - AmazonS3FullAccess
 # =====================================
 
-deploy-dev: ## Deploy to AWS dev
-	./terraform/scripts/deploy.sh dev
+aws-deploy-dev: ## Deploy to AWS dev
+	./terraform/aws/scripts/deploy.sh dev
 
-deploy-test: ## Deploy to AWS test
-	./terraform/scripts/deploy.sh test
+aws-deploy-test: ## Deploy to AWS test
+	./terraform/aws/scripts/deploy.sh test
 
-deploy-prod: ## Deploy to AWS prod
-	./terraform/scripts/deploy.sh prod
+aws-deploy-prod: ## Deploy to AWS prod
+	./terraform/aws/scripts/deploy.sh prod
 
 
-destroy-dev: ## Destroy dev
-	./terraform/scripts/destroy.sh dev
+aws-destroy-dev: ## Destroy dev
+	./terraform/aws/scripts/destroy.sh dev
 
-destroy-test: ## Destroy test
-	./terraform/scripts/destroy.sh test
+aws-destroy-test: ## Destroy test
+	./terraform/aws/scripts/destroy.sh test
 
-destroy-prod: ## Destroy prod
-	./terraform/scripts/destroy.sh prod
+aws-destroy-prod: ## Destroy prod
+	./terraform/aws/scripts/destroy.sh prod
 
 
 # =====================================

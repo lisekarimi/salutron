@@ -1,4 +1,4 @@
-# terraform/main.tf - this file contains the main configuration for the project
+# terraform/aws/main.tf - this file contains the main configuration for the project
 
 # ==========================================
 # Provider Configuration
@@ -107,8 +107,8 @@ resource "aws_iam_role_policy_attachment" "apprunner_ecr" {
 resource "aws_apprunner_auto_scaling_configuration_version" "app_scaling" {
   auto_scaling_configuration_name = "${local.name_prefix}-scaling"
 
-  min_size = 1
-  max_size = 2
+  min_size = var.min_instances
+  max_size = var.max_instances
 
   tags = local.common_tags
 }
@@ -153,4 +153,17 @@ resource "aws_apprunner_service" "app" {
   }
 
   tags = local.common_tags
+}
+
+# ==========================================
+# Custom Domain (Production Only)
+# ==========================================
+resource "aws_apprunner_custom_domain_association" "custom_domain" {
+  count = var.custom_domain != "" ? 1 : 0
+
+  service_arn = aws_apprunner_service.app.arn
+  domain_name = var.custom_domain
+
+  # Don't enable www subdomain
+  enable_www_subdomain = false
 }

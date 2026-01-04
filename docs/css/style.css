@@ -214,6 +214,28 @@ body {
     margin-right: 8px;
 }
 
+.feature.highlight {
+    background: white;
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.15);
+    border-left: 4px solid #764ba2;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.feature.highlight:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25);
+}
+
+.feature code {
+    background: #f0f0f0;
+    color: #667eea;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
 /* Demo Preview */
 .demo-preview {
     background: #f8f9fa;
