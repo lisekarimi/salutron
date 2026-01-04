@@ -10,6 +10,10 @@ terraform {
       version = "~> 5.0"
     }
   }
+  backend "s3" {
+    # Configuration provided via -backend-config flags in deploy.sh
+    # Bucket, key, region, dynamodb_table specified during init
+  }
 }
 
 provider "aws" {

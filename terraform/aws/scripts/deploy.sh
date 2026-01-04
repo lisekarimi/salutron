@@ -31,7 +31,14 @@ fi
 # ==========================================
 echo "📦 Step 1/3: Creating ECR repository..."
 cd "$SCRIPT_DIR/.."
-terraform init -input=false
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+AWS_REGION="us-east-1"
+terraform init -input=false \
+  -backend-config="bucket=salutron-terraform-state-${AWS_ACCOUNT_ID}" \
+  -backend-config="key=terraform.tfstate" \
+  -backend-config="region=${AWS_REGION}" \
+  -backend-config="dynamodb_table=salutron-terraform-locks" \
+  -backend-config="encrypt=true"
 
 if ! terraform workspace list | grep -q "$ENVIRONMENT"; then
   terraform workspace new "$ENVIRONMENT"

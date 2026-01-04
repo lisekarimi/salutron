@@ -103,6 +103,27 @@ gcp-destroy-prod: ## Destroy GCP prod
 
 
 # =====================================
+# 🚀 GitHub Actions Setup
+# =====================================
+# =====================================
+# Prerequisites:
+# Add these IAM policies to your AWS user:
+# - AmazonDynamoDBFullAccess_v2
+# - AmazonS3FullAccess
+# =====================================
+
+aws-setup-backend: ## Create S3 and DynamoDB for remote state (one-time)
+	@echo "🔐 Creating remote state backend..."
+	@cd terraform/ci-setup && \
+	terraform init -input=false && \
+	terraform apply \
+	  -target=aws_s3_bucket.terraform_state \
+	  -target=aws_s3_bucket_versioning.terraform_state \
+	  -target=aws_s3_bucket_server_side_encryption_configuration.terraform_state \
+	  -target=aws_s3_bucket_public_access_block.terraform_state \
+	  -target=aws_dynamodb_table.terraform_locks
+
+# =====================================
 # Local Website
 # =====================================
 gh: ## Serve GitHub Pages locally

@@ -28,6 +28,14 @@ fi
 
 # Change to terraform directory
 cd "$SCRIPT_DIR/.."
+AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+AWS_REGION="us-east-1"
+terraform init -input=false \
+  -backend-config="bucket=salutron-terraform-state-${AWS_ACCOUNT_ID}" \
+  -backend-config="key=terraform.tfstate" \
+  -backend-config="region=${AWS_REGION}" \
+  -backend-config="dynamodb_table=salutron-terraform-locks" \
+  -backend-config="encrypt=true"
 
 terraform workspace select "$ENVIRONMENT"
 
