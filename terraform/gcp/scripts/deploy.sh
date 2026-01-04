@@ -101,11 +101,32 @@ fi
 echo ""
 echo "🎉 Deployment complete!"
 echo "📊 Check outputs above for Cloud Run URL"
+echo "📊 Check outputs above for Cloud Run URL"
 
+# ==========================================
+# Step 4: Wait for Domain Mapping (prod only)
+# ==========================================
 if [ "$ENVIRONMENT" = "prod" ]; then
-  echo ""
-  echo "🌐 To add custom domain:"
-  echo "1. Go to GCP Console → Cloud Run → salutron-prod-service"
-  echo "2. Custom domains tab → Add mapping"
-  echo "3. Follow the instructions"
+  CUSTOM_DOMAIN=$(grep 'custom_domain' prod.tfvars 2>/dev/null | cut -d'"' -f2)
+  if [ ! -z "$CUSTOM_DOMAIN" ]; then
+    echo ""
+    echo "⏳ Waiting for SSL certificate provisioning..."
+    echo "This typically takes 5-15 minutes..."
+
+    # Check domain mapping status
+    for i in {1..30}; do
+      STATUS=$(gcloud run domain-mappings describe "$CUSTOM_DOMAIN" \
+        --region="$GCP_REGION" \
+        --project="$PROJECT_ID" \
+        --format="value(status.conditions[0].status)" 2>/dev/null || echo "Unknown")
+
+      if [ "$STATUS" = "True" ]; then
+        echo "✅ SSL certificate is ready!"
+        break
+      fi
+
+      echo "Still provisioning... (${i}/30)"
+      sleep 30
+    done
+  fi
 fi
