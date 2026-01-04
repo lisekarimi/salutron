@@ -135,3 +135,67 @@ resource "google_cloud_run_domain_mapping" "custom_domain" {
     route_name = google_cloud_run_v2_service.app.name
   }
 }
+
+# ==========================================
+# Monitoring - Notification Channel
+# ==========================================
+resource "google_monitoring_notification_channel" "email" {
+  display_name = "Email Alerts - ${var.environment}"
+  type         = "email"
+
+  labels = {
+    email_address = var.alert_email
+  }
+}
+
+# ==========================================
+# Alert Policy - 4xx Errors
+# ==========================================
+resource "google_monitoring_alert_policy" "cloudrun_4xx" {
+  display_name = "${local.name_prefix} - 4xx Errors"
+  combiner     = "OR"
+
+  conditions {
+    display_name = "4xx Error Rate"
+
+    condition_threshold {
+      filter          = "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"${google_cloud_run_v2_service.app.name}\" AND metric.type=\"run.googleapis.com/request_count\" AND metric.labels.response_code_class=\"4xx\""
+      duration        = "60s"
+      comparison      = "COMPARISON_GT"
+      threshold_value = 5
+
+      aggregations {
+        alignment_period   = "60s"
+        per_series_aligner = "ALIGN_RATE"
+      }
+    }
+  }
+
+  notification_channels = [google_monitoring_notification_channel.email.id]
+}
+
+# ==========================================
+# Alert Policy - 5xx Errors
+# ==========================================
+resource "google_monitoring_alert_policy" "cloudrun_5xx" {
+  display_name = "${local.name_prefix} - 5xx Errors"
+  combiner     = "OR"
+
+  conditions {
+    display_name = "5xx Error Rate"
+
+    condition_threshold {
+      filter          = "resource.type=\"cloud_run_revision\" AND resource.labels.service_name=\"${google_cloud_run_v2_service.app.name}\" AND metric.type=\"run.googleapis.com/request_count\" AND metric.labels.response_code_class=\"5xx\""
+      duration        = "60s"
+      comparison      = "COMPARISON_GT"
+      threshold_value = 0
+
+      aggregations {
+        alignment_period   = "60s"
+        per_series_aligner = "ALIGN_RATE"
+      }
+    }
+  }
+
+  notification_channels = [google_monitoring_notification_channel.email.id]
+}
