@@ -13,6 +13,31 @@ This project demonstrates:
 - ✅ Secure secret management
 - ✅ Production-ready DevOps workflow
 
+## 📋 Prerequisites
+
+**Skills assumed:**
+- Familiarity with Docker
+- Basic AWS knowledge
+- AWS CLI configured
+- Understanding of Makefiles
+
+**Tools required:**
+- Docker Desktop
+- Terraform >= 1.0
+- AWS CLI v2
+- Python 3.11+
+- Make
+
+
+## 🌐 AWS vs GCP Comparison
+
+| AWS | GCP Equivalent |
+|-----|----------------|
+| App Runner | Cloud Run |
+| ECR (Elastic Container Registry) | Artifact Registry |
+| S3 (Simple Storage Service) | Cloud Storage |
+| IAM Roles | Service Accounts |
+
 ## 🚀 Key Features
 
 ### Multi-Environment Infrastructure
@@ -50,20 +75,7 @@ make destroy-dev  # Complete teardown
 | **OpenAI GPT-4** | AI-powered greetings |
 | **Bash + Make** | Deployment automation |
 
-## 📋 Prerequisites
 
-**Skills assumed:**
-- Familiarity with Docker
-- Basic AWS knowledge
-- AWS CLI configured
-- Understanding of Makefiles
-
-**Tools required:**
-- Docker Desktop
-- Terraform >= 1.0
-- AWS CLI v2
-- Python 3.11+
-- Make
 
 ## 🔐 AWS Setup
 

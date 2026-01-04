@@ -75,6 +75,34 @@ aws-destroy-prod: ## Destroy prod
 
 
 # =====================================
+# 🚀 GCP Deployment / Destroy via Terraform
+# =====================================
+
+gcp-setup: ## One-time GCP project setup
+	./terraform/gcp/scripts/setup.sh
+
+# GCP Deployment
+gcp-deploy-dev: ## Deploy to GCP dev
+	./terraform/gcp/scripts/deploy.sh dev
+
+gcp-deploy-test: ## Deploy to GCP test
+	./terraform/gcp/scripts/deploy.sh test
+
+gcp-deploy-prod: ## Deploy to GCP prod
+	./terraform/gcp/scripts/deploy.sh prod
+
+# GCP Destroy
+gcp-destroy-dev: ## Destroy GCP dev
+	./terraform/gcp/scripts/destroy.sh dev
+
+gcp-destroy-test: ## Destroy GCP test
+	./terraform/gcp/scripts/destroy.sh test
+
+gcp-destroy-prod: ## Destroy GCP prod
+	./terraform/gcp/scripts/destroy.sh prod
+
+
+# =====================================
 # Local Website
 # =====================================
 gh: ## Serve GitHub Pages locally
