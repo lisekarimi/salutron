@@ -156,6 +156,63 @@ resource "aws_apprunner_service" "app" {
 }
 
 # ==========================================
+# SNS Topic for Alerts
+# ==========================================
+resource "aws_sns_topic" "alerts" {
+  name = "${local.name_prefix}-alerts"
+  tags = local.common_tags
+}
+
+resource "aws_sns_topic_subscription" "email" {
+  topic_arn = aws_sns_topic.alerts.arn
+  protocol  = "email"
+  endpoint  = var.alert_email
+}
+
+# ==========================================
+# CloudWatch Alarms
+# ==========================================
+# CloudWatch Alarm - 4xx errors
+resource "aws_cloudwatch_metric_alarm" "apprunner_4xx" {
+  alarm_name          = "${local.name_prefix}-4xx-errors"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "4XXError"
+  namespace           = "AWS/AppRunner"
+  period              = "60"
+  statistic           = "Sum"
+  threshold           = "5"
+
+  dimensions = {
+    ServiceName = aws_apprunner_service.app.service_name
+  }
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+
+  tags = local.common_tags
+}
+
+# CloudWatch Alarm - 5xx errors
+resource "aws_cloudwatch_metric_alarm" "apprunner_5xx" {
+  alarm_name          = "${local.name_prefix}-5xx-errors"
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = "1"
+  metric_name         = "5XXError"
+  namespace           = "AWS/AppRunner"
+  period              = "60"
+  statistic           = "Sum"
+  threshold           = "0"
+
+  dimensions = {
+    ServiceName = aws_apprunner_service.app.service_name
+  }
+
+  alarm_actions = [aws_sns_topic.alerts.arn]
+
+  tags = local.common_tags
+}
+
+# ==========================================
 # Custom Domain (Production Only)
 # ==========================================
 resource "aws_apprunner_custom_domain_association" "custom_domain" {

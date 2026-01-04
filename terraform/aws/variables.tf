@@ -39,3 +39,9 @@ variable "max_instances" {
   type        = number
   default     = 2
 }
+
+variable "alert_email" {
+  description = "Email for monitoring alerts"
+  type        = string
+  default     = "lisekarimi.global@gmail.com"
+}
