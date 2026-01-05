@@ -37,7 +37,11 @@ fi
 echo "📦 Step 1/3: Creating Azure Container Registry..."
 cd "$SCRIPT_DIR/.."
 
-terraform init -input=false
+terraform init -input=false \
+  -backend-config="resource_group_name=salutron-rg" \
+  -backend-config="storage_account_name=salutronterraformstate" \
+  -backend-config="container_name=tfstate" \
+  -backend-config="key=azure-${ENVIRONMENT}.tfstate"
 
 if ! terraform workspace list | grep -q "$ENVIRONMENT"; then
   terraform workspace new "$ENVIRONMENT"
