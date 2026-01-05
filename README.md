@@ -42,10 +42,18 @@ Multi-environment (dev/test/prod) infrastructure with automated CI/CD pipelines,
 
 **1. Create IAM User**
 Create `terraform_user` with these policies:
+-  AmazonDynamoDBFullAccess_v2
 - `AmazonEC2ContainerRegistryFullAccess`
 - `IAMFullAccess`
 - `AWSAppRunnerFullAccess`
 - `AmazonS3FullAccess`
+# - AmazonDynamoDBFullAccess_v2
+# - AmazonEC2ContainerRegistryFullAccess
+# - IAMFullAccess
+# - AWSAppRunnerFullAccess
+# - AmazonS3FullAccess
+# - AmazonSNSFullAccess
+# - CloudWatchFullAccess
 
 **2. Configure AWS CLI**
 ```bash
@@ -189,3 +197,15 @@ MIT License - feel free to use this project for learning!
 Built with ❤️ while learning DevOps
 
 **⭐ Star this repo if it helped you learn Terraform and AWS/GCP!**
+
+
+Azure Account (Your Email)
+  └── Subscription (e.g., "Azure for Students")
+      └── Resource Group (e.g., "cyber-analyzer-rg")
+          └── Resources (Container Apps, Registry, etc.)
+
+            Install Azure cli
+            az --version
+            az login
+            az account list --output table
+            az group list --output table

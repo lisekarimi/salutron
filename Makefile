@@ -43,7 +43,7 @@ restart: clean dev ## Restart dev container
 
 
 # =====================================
-# 🚀 AWS Deployment / Destroy via Terraform
+# 🚀 AWS Deployment / Destroy via Terraform locally
 # =====================================
 # =====================================
 # Prerequisites:
@@ -52,8 +52,11 @@ restart: clean dev ## Restart dev container
 # - IAMFullAccess
 # - AWSAppRunnerFullAccess
 # - AmazonS3FullAccess
+# - AmazonSNSFullAccess
+# - CloudWatchFullAccess
 # =====================================
 
+# AWS Deployment
 aws-deploy-dev: ## Deploy to AWS dev
 	./terraform/aws/scripts/deploy.sh dev
 
@@ -75,7 +78,7 @@ aws-destroy-prod: ## Destroy prod
 
 
 # =====================================
-# 🚀 GCP Deployment / Destroy via Terraform
+# 🚀 GCP Deployment / Destroy via Terraform locally
 # =====================================
 
 gcp-setup: ## One-time GCP project setup
@@ -103,6 +106,36 @@ gcp-destroy-prod: ## Destroy GCP prod
 
 
 # =====================================
+# 🚀 Azure Deployment / Destroy via Terraform locally
+# =====================================
+
+azure-setup: ## One-time Azure setup
+	./terraform/azure/scripts/setup.sh
+
+
+# Azure Deployment
+azure-deploy-dev: ## Deploy to Azure dev
+	./terraform/azure/scripts/deploy.sh dev
+
+azure-deploy-test: ## Deploy to Azure test
+	./terraform/azure/scripts/deploy.sh test
+
+azure-deploy-prod: ## Deploy to Azure prod
+	./terraform/azure/scripts/deploy.sh prod
+
+# Azure Destroy
+azure-destroy-dev: ## Destroy Azure dev
+	./terraform/azure/scripts/destroy.sh dev
+
+azure-destroy-test: ## Destroy Azure test
+	./terraform/azure/scripts/destroy.sh test
+
+azure-destroy-prod: ## Destroy Azure prod
+	./terraform/azure/scripts/destroy.sh prod
+
+
+
+# =====================================
 # 🚀 GitHub Actions Setup
 # =====================================
 
@@ -110,7 +143,12 @@ gcp-destroy-prod: ## Destroy GCP prod
 # AWS Prerequisites:
 # Add these IAM policies to your AWS user:
 # - AmazonDynamoDBFullAccess_v2
+# - AmazonEC2ContainerRegistryFullAccess
+# - IAMFullAccess
+# - AWSAppRunnerFullAccess
 # - AmazonS3FullAccess
+# - AmazonSNSFullAccess
+# - CloudWatchFullAccess
 # =====================================
 
 aws-setup-backend: ## Create S3 and DynamoDB for remote state (one-time)
@@ -138,7 +176,7 @@ aws-setup-github-oidc: ## Setup GitHub OIDC for CI/CD (one-time)
 # GCP Prerequisites:
 # - Authenticate with gcloud auth application-default login
 # - Create/set the GCP project
-# - Enable required APIs (storage.googleapis.com, iam.googleapis.com)
+# - Run make gcp-setup
 # =====================================
 
 gcp-setup-backend: ## Create GCS bucket for Terraform state (one-time)
@@ -161,6 +199,22 @@ gcp-setup-github-workload-identity: ## Setup GCP Workload Identity for GitHub Ac
 	@cd terraform/ci-setup/gcp && terraform output workload_identity_provider
 	@cd terraform/ci-setup/gcp && terraform output service_account_email
 
+
+# =====================================
+# Azure Prerequisites:
+# - Create/set the Azure subscription
+# - Run make azure-setup
+# =====================================
+
+azure-setup-backend: ## Create Storage Account for Terraform state (one-time)
+	@echo "🔐 Creating Azure backend for Terraform state..."
+	@cd terraform/ci-setup/azure && \
+	terraform init -input=false && \
+	terraform apply -auto-approve
+	@echo "✅ Azure backend created successfully!"
+
+
+
 # =====================================
 # Local Website
 # =====================================
@@ -169,6 +223,13 @@ gh: ## Serve GitHub Pages locally
 	@echo "📁 Serving docs/ folder"
 	@echo "Press Ctrl+C to stop"
 	@cd docs && python3 -m http.server 8000
+
+
+
+
+
+
+
 
 # =====================================
 # 📚 Documentation & Help

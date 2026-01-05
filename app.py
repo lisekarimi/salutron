@@ -25,7 +25,7 @@ def call_openai(prompt: str) -> str:
 
 @app.route('/')
 def hello():
-    prompt = "Greet someone warmly and mention this is a learning project built to master Terraform, Docker, and AWS. Keep it fun and under 20 words!"
+    prompt = "Greet someone warmly and mention this is a learning project built to master Terraform, Docker, and AWS, GCP and Azure. Keep it fun and under 20 words!"
     greeting = call_openai(prompt)
     return render_template('index.html', greeting=greeting)
 

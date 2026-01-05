@@ -10,6 +10,7 @@ terraform {
       version = "~> 5.0"
     }
   }
+  # comment out the backend if you want to use local state
   backend "gcs" {
     bucket = "salutron-terraform-state-gcp"
     prefix = "terraform/state"

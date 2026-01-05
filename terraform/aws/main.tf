@@ -10,6 +10,7 @@ terraform {
       version = "~> 5.0"
     }
   }
+  # comment out the backend if you want to use local state
   backend "s3" {
     # Configuration provided via -backend-config flags in deploy.sh
     # Bucket, key, region, dynamodb_table specified during init
