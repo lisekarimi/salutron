@@ -1,0 +1,74 @@
+# .github/workflows/azure-deploy.yml
+name: Deploy Salutron to Azure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login via OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Azure Container Registry Login
+        run: |
+          az acr login --name salutron${{ github.event.inputs.environment }}acr
+
+      - name: Run Deployment Script
+        run: |
+          export AZURE_RESOURCE_GROUP=${{ secrets.AZURE_RESOURCE_GROUP }}
+          export AZURE_REGION=${{ secrets.AZURE_REGION }}
+
+          chmod +x terraform/azure/scripts/deploy.sh
+          ./terraform/azure/scripts/deploy.sh ${{ github.event.inputs.environment }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Get Deployment URLs
+        id: deploy_outputs
+        working-directory: ./terraform/azure
+        run: |
+          terraform workspace select ${{ github.event.inputs.environment }}
+          echo "container_app_url=$(terraform output -raw container_app_url)" >> $GITHUB_OUTPUT
+          echo "container_registry=$(terraform output -raw container_registry_url)" >> $GITHUB_OUTPUT
+          echo "resource_group=$(terraform output -raw resource_group)" >> $GITHUB_OUTPUT
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ Deployment Complete!"
+          echo "🚀 Container App URL: ${{ steps.deploy_outputs.outputs.container_app_url }}"
+          echo "📦 Container Registry: ${{ steps.deploy_outputs.outputs.container_registry }}"
+          echo "📦 Resource Group: ${{ steps.deploy_outputs.outputs.resource_group }}"

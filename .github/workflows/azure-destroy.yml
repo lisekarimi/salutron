@@ -1,0 +1,67 @@
+# .github/workflows/azure-destroy.yml
+name: Destroy Salutron in Azure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to destroy'
+        required: true
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
+      confirm:
+        description: 'Type the environment name to confirm destruction'
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  destroy:
+    name: Destroy ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Verify confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "${{ github.event.inputs.environment }}" ]; then
+            echo "❌ Confirmation does not match environment name!"
+            echo "You entered: '${{ github.event.inputs.confirm }}'"
+            echo "Expected: '${{ github.event.inputs.environment }}'"
+            exit 1
+          fi
+          echo "✅ Destruction confirmed for ${{ github.event.inputs.environment }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login via OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Run Destroy Script
+        run: |
+          export AZURE_RESOURCE_GROUP=${{ secrets.AZURE_RESOURCE_GROUP }}
+          export AZURE_REGION=${{ secrets.AZURE_REGION }}
+
+          chmod +x terraform/azure/scripts/destroy.sh
+          ./terraform/azure/scripts/destroy.sh ${{ github.event.inputs.environment }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Destruction Complete
+        run: |
+          echo "✅ Environment ${{ github.event.inputs.environment }} has been destroyed!"

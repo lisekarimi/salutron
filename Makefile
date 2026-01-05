@@ -214,6 +214,17 @@ azure-setup-backend: ## Create Storage Account for Terraform state (one-time)
 	@echo "✅ Azure backend created successfully!"
 
 
+azure-setup-workload-identity: ## Setup Azure Workload Identity for GitHub Actions (one-time)
+	@echo "🔐 Setting up Azure Workload Identity..."
+	@cd terraform/ci-setup/azure && \
+	terraform init -input=false && \
+	terraform apply -auto-approve
+	@echo ""
+	@echo "✅ Workload Identity setup complete!"
+	@cd terraform/ci-setup/azure && terraform output client_id
+	@cd terraform/ci-setup/azure && terraform output tenant_id
+	@cd terraform/ci-setup/azure && terraform output subscription_id
+
 
 # =====================================
 # Local Website
