@@ -12,6 +12,8 @@ Multi-environment (dev/test/prod) infrastructure with automated CI/CD pipelines,
 - Remote state management with workspace isolation
 - Docker containerization with optimized builds
 
+---
+
 ## 📋 Prerequisites
 
 **Required:**
@@ -24,6 +26,8 @@ Multi-environment (dev/test/prod) infrastructure with automated CI/CD pipelines,
 **Skills:**
 - Terraform, Docker, Bash scripting, CI/CD concepts
 
+---
+
 ## 🛠️ Tech Stack
 
 | Component | AWS | GCP | Azure |
@@ -34,6 +38,7 @@ Multi-environment (dev/test/prod) infrastructure with automated CI/CD pipelines,
 | Auth | IAM + OIDC | Service Accounts + Workload Identity | Service Principal + Workload Identity |
 | State | S3 + DynamoDB | Cloud Storage | Blob Storage |
 
+---
 
 ## 🚀 Deployment Guide
 
@@ -41,65 +46,60 @@ Multi-environment (dev/test/prod) infrastructure with automated CI/CD pipelines,
 
 #### Local Deployment
 
-**1. Create IAM User**
+**1️⃣ Create IAM User**
 Create `terraform_user` with these policies:
--  AmazonDynamoDBFullAccess_v2
 - `AmazonEC2ContainerRegistryFullAccess`
 - `IAMFullAccess`
 - `AWSAppRunnerFullAccess`
 - `AmazonS3FullAccess`
-# - AmazonDynamoDBFullAccess_v2
-# - AmazonEC2ContainerRegistryFullAccess
-# - IAMFullAccess
-# - AWSAppRunnerFullAccess
-# - AmazonS3FullAccess
-# - AmazonSNSFullAccess
-# - CloudWatchFullAccess
+- `AmazonSNSFullAccess`
+- `CloudWatchFullAccess`
+- `AmazonDynamoDBFullAccess`
 
-**2. Configure AWS CLI**
+**2️⃣ Configure AWS CLI**
 ```bash
 aws configure
 # Enter terraform_user credentials
 ```
 
-**3. Setup Remote State Backend (One-Time)**
+**3️⃣ Setup Remote State Backend (One-Time)**
 ```bash
 make aws-setup-backend
 ```
 
-**4. Deploy to Environment**
+**4️⃣ Deploy to Environment**
 ```bash
 make aws-deploy-dev   # Development
 make aws-deploy-test  # Testing
 make aws-deploy-prod  # Production
 ```
 
-**5. Destroy Environment**
+**5️⃣ Destroy Environment**
 ```bash
 make aws-destroy-dev
 ```
 
 #### GitHub Actions CI/CD Setup
 
-**1. Setup OIDC Authentication**
+**1️⃣ Setup OIDC Authentication**
 ```bash
 make aws-setup-github-oidc
 # Save the output: github_actions_role_arn
 ```
 
-**2. Add GitHub Secrets**
+**2️⃣ Add GitHub Secrets**
 Go to GitHub repo → Settings → Secrets and variables → Actions:
 - `AWS_ROLE_ARN`: `arn:aws:iam::YOUR_ACCOUNT:role/github-actions-salutron-deploy`
 - `DEFAULT_AWS_REGION`: `us-east-1`
 - `AWS_ACCOUNT_ID`: Your 12-digit AWS account ID
 - `OPENAI_API_KEY`: Your OpenAI API key
 
-**3. Deploy via GitHub Actions**
+**3️⃣ Deploy via GitHub Actions**
 - Go to Actions tab → "Deploy Salutron"
 - Click "Run workflow"
 - Select environment (dev/test/prod)
 
-**Why OIDC Instead of Access Keys?**
+**🔐 Why OIDC Instead of Access Keys?**
 
 ```
 Traditional Access Keys ❌          OIDC (Recommended) ✅
@@ -109,7 +109,7 @@ Traditional Access Keys ❌          OIDC (Recommended) ✅
 └─ Hard to audit                   └─ Full audit trail
 ```
 
-**How OIDC Works:**
+**🔄 How OIDC Works:**
 ```
 ┌─────────────┐                    ┌─────────────┐
 │   GitHub    │ 1. JWT token      │     AWS     │
@@ -119,36 +119,38 @@ Traditional Access Keys ❌          OIDC (Recommended) ✅
 └─────────────┘                    └─────────────┘
 ```
 
+---
+
 ### GCP Deployment
 
 #### Local Deployment
 
-**1. Initial GCP Setup**
+**1️⃣ Initial GCP Setup**
 ```bash
 make gcp-setup
 # Authenticates and enables required APIs
 ```
 
-**2. Setup Remote State Backend (One-Time)**
+**2️⃣ Setup Remote State Backend (One-Time)**
 ```bash
 make gcp-setup-backend
 ```
 
-**3. Deploy to Environment**
+**3️⃣ Deploy to Environment**
 ```bash
 make gcp-deploy-dev   # Development
 make gcp-deploy-test  # Testing
 make gcp-deploy-prod  # Production
 ```
 
-**4. Destroy Environment**
+**4️⃣ Destroy Environment**
 ```bash
 make gcp-destroy-dev
 ```
 
 #### GitHub Actions CI/CD Setup
 
-**1. Setup Workload Identity Federation**
+**1️⃣ Setup Workload Identity Federation**
 ```bash
 make gcp-setup-workload-identity
 # Save both outputs:
@@ -156,7 +158,7 @@ make gcp-setup-workload-identity
 # - service_account_email
 ```
 
-**2. Add GitHub Secrets**
+**2️⃣ Add GitHub Secrets**
 Go to GitHub repo → Settings → Secrets and variables → Actions:
 - `GCP_PROJECT_ID`: `salutron`
 - `GCP_WORKLOAD_IDENTITY_PROVIDER`: `projects/280220662544/locations/global/...`
@@ -164,56 +166,58 @@ Go to GitHub repo → Settings → Secrets and variables → Actions:
 - `GCP_REGION`: `us-central1`
 - `OPENAI_API_KEY`: Your OpenAI API key
 
-**3. Deploy via GitHub Actions**
+**3️⃣ Deploy via GitHub Actions**
 - Go to Actions tab → "Deploy Salutron to GCP"
 - Click "Run workflow"
 - Select environment (dev/test/prod)
 
-**GCP Workload Identity = AWS OIDC**
-Same concept, different name. No long-lived service account keys needed!
+> **💡 GCP Workload Identity = AWS OIDC**
+> Same concept, different name. No long-lived service account keys needed!
+
+---
 
 ### Azure Deployment
 
 #### Local Deployment
 
-**1. Install Azure CLI**
+**1️⃣ Install Azure CLI**
 ```bash
 az --version
 az login
 ```
 
-**2. Initial Azure Setup**
+**2️⃣ Initial Azure Setup**
 ```bash
 make azure-setup
 # Registers required resource providers
 ```
 
-**3. Setup Remote State Backend (One-Time)**
+**3️⃣ Setup Remote State Backend (One-Time)**
 ```bash
 make azure-setup-backend
 ```
 
-**4. Deploy to Environment**
+**4️⃣ Deploy to Environment**
 ```bash
 make azure-deploy-dev   # Development
 make azure-deploy-test  # Testing
 make azure-deploy-prod  # Production
 ```
 
-**5. Destroy Environment**
+**5️⃣ Destroy Environment**
 ```bash
 make azure-destroy-dev
 ```
 
 #### GitHub Actions CI/CD Setup
 
-**1. Setup Workload Identity Federation**
+**1️⃣ Setup Workload Identity Federation**
 ```bash
 make azure-setup-workload-identity
 # Save the outputs: client_id, tenant_id, subscription_id
 ```
 
-**2. Add GitHub Secrets**
+**2️⃣ Add GitHub Secrets**
 - `AZURE_CLIENT_ID`: Service principal client ID
 - `AZURE_TENANT_ID`: Azure tenant ID
 - `AZURE_SUBSCRIPTION_ID`: Azure subscription ID
@@ -221,10 +225,12 @@ make azure-setup-workload-identity
 - `AZURE_REGION`: `francecentral`
 - `OPENAI_API_KEY`: Your OpenAI API key
 
-**3. Deploy via GitHub Actions**
+**3️⃣ Deploy via GitHub Actions**
 - Actions → "Deploy Salutron to Azure"
 - Click "Run workflow"
 - Select environment
+
+---
 
 ## 🌐 Multi-Cloud Comparison
 
@@ -239,7 +245,7 @@ make azure-setup-workload-identity
 | **Min Instances** | 1 | 0 (scale to zero) | 1 (with ingress) |
 | **Pricing Model** | Pay per request | Pay per 100ms | Pay per request |
 
-
+---
 
 ## 📄 License
 
