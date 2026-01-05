@@ -123,6 +123,16 @@ aws-setup-backend: ## Create S3 and DynamoDB for remote state (one-time)
 	  -target=aws_s3_bucket_public_access_block.terraform_state \
 	  -target=aws_dynamodb_table.terraform_locks
 
+aws-setup-github-oidc: ## Setup GitHub OIDC for CI/CD (one-time)
+	@echo "🔐 Setting up GitHub OIDC..."
+	@cd terraform/ci-setup && \
+	terraform init -input=false && \
+	terraform apply -auto-approve
+	@echo ""
+	@echo "✅ GitHub OIDC setup complete!"
+	@cd terraform/ci-setup && terraform output github_actions_role_arn
+
+
 # =====================================
 # Local Website
 # =====================================

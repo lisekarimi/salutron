@@ -1,0 +1,73 @@
+name: Deploy Salutron
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: github-actions-deploy
+          aws-region: ${{ secrets.DEFAULT_AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Run Deployment Script
+        run: |
+          export AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}
+          export AWS_REGION=${{ secrets.DEFAULT_AWS_REGION }}
+
+          chmod +x terraform/aws/scripts/deploy.sh
+          ./terraform/aws/scripts/deploy.sh ${{ github.event.inputs.environment }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Get Deployment URLs
+        id: deploy_outputs
+        working-directory: ./terraform/aws
+        run: |
+          terraform workspace select ${{ github.event.inputs.environment }}
+          echo "app_runner_url=$(terraform output -raw app_runner_url)" >> $GITHUB_OUTPUT
+          echo "ecr_repository=$(terraform output -raw ecr_repository_url)" >> $GITHUB_OUTPUT
+          echo "app_runner_status=$(terraform output -raw app_runner_status)" >> $GITHUB_OUTPUT
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ Deployment Complete!"
+          echo "🚀 App Runner URL: ${{ steps.deploy_outputs.outputs.app_runner_url }}"
+          echo "📦 ECR Repository: ${{ steps.deploy_outputs.outputs.ecr_repository }}"
+          echo "📊 Status: ${{ steps.deploy_outputs.outputs.app_runner_status }}"
