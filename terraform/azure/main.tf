@@ -8,9 +8,9 @@ terraform {
     }
   }
   # comment out the backend if you want to use local state
-  # backend "azurerm" {
-  #   # Configuration provided via -backend-config flags in deploy.sh
-  # }
+  backend "azurerm" {
+    # Configuration provided via -backend-config flags in deploy.sh
+  }
 }
 
 provider "azurerm" {
