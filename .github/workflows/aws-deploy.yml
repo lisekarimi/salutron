@@ -1,4 +1,4 @@
-name: Deploy Salutron
+name: Deploy Salutron in AWS
 
 on:
   workflow_dispatch:
