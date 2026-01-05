@@ -27,6 +27,7 @@ fi
 
 # Change to terraform directory
 cd "$SCRIPT_DIR/.."
+terraform init -input=false
 
 terraform workspace select "$ENVIRONMENT"
 
