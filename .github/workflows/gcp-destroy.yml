@@ -1,5 +1,5 @@
 # .github/workflows/gcp-destroy.yml
-name: Destroy Salutron GCP Environment
+name: Destroy Salutron in GCP
 
 on:
   workflow_dispatch:
