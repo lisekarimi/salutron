@@ -49,11 +49,13 @@ if [ "$ENVIRONMENT" = "prod" ]; then
   terraform destroy \
     -var-file=prod.tfvars \
     -var="environment=$ENVIRONMENT" \
-    -var="openai_api_key=$OPENAI_API_KEY"
+    -var="openai_api_key=$OPENAI_API_KEY" \
+    -auto-approve
 else
   terraform destroy \
     -var="environment=$ENVIRONMENT" \
-    -var="openai_api_key=$OPENAI_API_KEY"
+    -var="openai_api_key=$OPENAI_API_KEY" \
+    -auto-approve
 fi
 
 # Remind about manual Cloudflare cleanup for prod
