@@ -12,6 +12,43 @@ IMAGE_NAME = $(PROJECT_NAME)
 CONTAINER_NAME = $(PROJECT_NAME)-container
 APP_PORT = 5000
 
+# =======================
+# 🪝 Hooks
+# =======================
+
+hooks:	## Install pre-commit on local machine
+	pip install pre-commit && pre-commit install && pre-commit install --hook-type commit-msg
+
+# Pre-commit ensures code quality before commits.
+# Installing globally lets you use it across all projects.
+# Check if pre-commit command exists : pre-commit --version
+
+
+# =====================================
+# ✨ Code Quality
+# =====================================
+
+lint:	## Run code linting and formatting
+	uvx ruff check .
+	uvx ruff format .
+
+fix:	## Fix code issues and format
+	uvx ruff check --fix .
+	uvx ruff format .
+
+
+# =======================
+# 🔍 Security Scanning
+# =======================
+security-scan:		## Run all security checks
+	gitleaks detect --source . --verbose && \
+	uv export --no-dev -o requirements.txt && \
+	uvx pip-audit -r requirements.txt && \
+	python3 -c "import os; os.remove('requirements.txt') if os.path.exists('requirements.txt') else None" && \
+	uvx bandit -r . --exclude ./.venv,./node_modules,./.git
+
+
+
 # =====================================
 # 🐋 Docker Commands (Development)
 # =====================================
@@ -234,7 +271,6 @@ gh: ## Serve GitHub Pages locally
 	@echo "📁 Serving docs/ folder"
 	@echo "Press Ctrl+C to stop"
 	@cd docs && python3 -m http.server 8000
-
 
 # =====================================
 # 📚 Documentation & Help

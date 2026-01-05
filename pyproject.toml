@@ -9,3 +9,22 @@ dependencies = [
     "openai>=1.12.0",
     "gunicorn>=21.2.0",
 ]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort (import sorting)
+    "B",    # flake8-bugbear (common bugs)
+    "UP",   # pyupgrade (modern Python)
+    "D",    # pydocstyle (docstrings)
+]
+
+ignore = [
+    "E501",  # line too long
+    "D100",  # missing docstring in public module
+    "D104",  # missing docstring in public package
+    "D203",  # incorrect-blank-line-before-class
+    "D213",  # multi-line-summary-second-line
+]
