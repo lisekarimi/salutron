@@ -105,6 +105,7 @@ resource "google_project_iam_member" "github_actions_roles" {
     "roles/monitoring.admin",             # Monitoring/Alerts
     "roles/compute.viewer",               # Read project info
     "roles/iam.serviceAccountAdmin",      # Service Account admin
+    "roles/iam.securityAdmin",            # IAM Security admin
   ])
 
   project = var.project_id
