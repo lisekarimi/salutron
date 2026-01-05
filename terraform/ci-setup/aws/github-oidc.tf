@@ -1,11 +1,7 @@
-# terraform/ci-setup/github-oidc.tf
+# terraform/ci-setup/aws/github-oidc.tf
 
 # One-time setup for GitHub OIDC and CI/CD permissions
 # Run once, then delete this file
-
-# ==========================================
-# Variables
-# ==========================================
 
 variable "github_repository" {
   description = "GitHub repository in format 'owner/repo'"
@@ -41,7 +37,12 @@ resource "aws_iam_role" "github_actions" {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
         }
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = "repo:${var.github_repository}:*"
+          # Allow all environments (dev, test, prod)
+          "token.actions.githubusercontent.com:sub" = [
+            "repo:${var.github_repository}:environment:dev",
+            "repo:${var.github_repository}:environment:test",
+            "repo:${var.github_repository}:environment:prod"
+          ]
         }
       }
     }]
@@ -55,10 +56,8 @@ resource "aws_iam_role" "github_actions" {
 }
 
 # ==========================================
-# 🔴 NEW: Backend Access Policies
+# Backend Access Policies
 # ==========================================
-
-# S3 Backend Access
 resource "aws_iam_role_policy" "github_terraform_backend" {
   name = "github-actions-terraform-backend"
   role = aws_iam_role.github_actions.id
@@ -96,7 +95,6 @@ resource "aws_iam_role_policy" "github_terraform_backend" {
 # ==========================================
 # Application Deployment Policies
 # ==========================================
-
 resource "aws_iam_role_policy_attachment" "github_ecr" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
   role       = aws_iam_role.github_actions.name
@@ -127,7 +125,7 @@ resource "aws_iam_role_policy_attachment" "github_iam_read" {
   role       = aws_iam_role.github_actions.name
 }
 
-# IAM Management (for creating App Runner roles, etc.)
+# IAM Management
 resource "aws_iam_role_policy" "github_iam_management" {
   name = "github-actions-iam-management"
   role = aws_iam_role.github_actions.id

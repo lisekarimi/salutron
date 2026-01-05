@@ -33,14 +33,30 @@ resource "azuread_service_principal" "github_actions" {
 }
 
 # ==========================================
-# Federated Identity Credential (OIDC)
+# Federated Identity Credentials (OIDC) - One per environment
 # ==========================================
-resource "azuread_application_federated_identity_credential" "github_actions" {
+resource "azuread_application_federated_identity_credential" "github_actions_dev" {
   application_id = azuread_application.github_actions.id
-  display_name   = "github-actions-federation"
+  display_name   = "github-actions-dev"
   audiences      = ["api://AzureADTokenExchange"]
   issuer         = "https://token.actions.githubusercontent.com"
-  subject        = "repo:${var.github_repository}:ref:refs/heads/main"
+  subject        = "repo:${var.github_repository}:environment:dev"
+}
+
+resource "azuread_application_federated_identity_credential" "github_actions_test" {
+  application_id = azuread_application.github_actions.id
+  display_name   = "github-actions-test"
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:${var.github_repository}:environment:test"
+}
+
+resource "azuread_application_federated_identity_credential" "github_actions_prod" {
+  application_id = azuread_application.github_actions.id
+  display_name   = "github-actions-prod"
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:${var.github_repository}:environment:prod"
 }
 
 # ==========================================
