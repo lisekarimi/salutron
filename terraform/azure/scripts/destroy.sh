@@ -34,7 +34,11 @@ fi
 # Change to terraform directory
 cd "$SCRIPT_DIR/.."
 
-terraform init -input=false
+terraform init -input=false \
+  -backend-config="resource_group_name=salutron-rg" \
+  -backend-config="storage_account_name=salutronterraformstate" \
+  -backend-config="container_name=tfstate" \
+  -backend-config="key=azure-${ENVIRONMENT}.tfstate"
 
 terraform workspace select "$ENVIRONMENT"
 
