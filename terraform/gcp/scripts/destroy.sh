@@ -35,11 +35,13 @@ if [ "$ENVIRONMENT" = "prod" ]; then
   terraform destroy \
     -var="environment=$ENVIRONMENT" \
     -var="openai_api_key=$OPENAI_API_KEY" \
-    -var-file=prod.tfvars
+    -var-file=prod.tfvars \
+    -auto-approve
 else
   terraform destroy \
     -var="environment=$ENVIRONMENT" \
-    -var="openai_api_key=$OPENAI_API_KEY"
+    -var="openai_api_key=$OPENAI_API_KEY" \
+    -auto-approve
 fi
 
 # Remind about manual DNS cleanup for prod
