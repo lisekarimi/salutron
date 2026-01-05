@@ -14,7 +14,7 @@ fi
 
 echo "🗑️  Destroying ${ENVIRONMENT} environment..."
 
-# Load secrets from .env
+# Load secrets from .env if available (local), otherwise use environment variables (CI)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 
@@ -22,8 +22,7 @@ if [ -f "$PROJECT_ROOT/.env" ]; then
   export $(grep -v '^#' $PROJECT_ROOT/.env | xargs)
   echo "✅ Loaded secrets from .env"
 else
-  echo "❌ Error: .env file not found at $PROJECT_ROOT/.env"
-  exit 1
+  echo "✅ Using secrets from environment variables"
 fi
 
 # Change to terraform directory

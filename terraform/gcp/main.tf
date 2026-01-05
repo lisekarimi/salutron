@@ -10,6 +10,10 @@ terraform {
       version = "~> 5.0"
     }
   }
+  backend "gcs" {
+    bucket = "salutron-terraform-state-gcp"
+    prefix = "terraform/state"
+  }
 }
 
 provider "google" {

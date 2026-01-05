@@ -1,0 +1,72 @@
+# .github/workflows/gcp-destroy.yml
+name: Destroy Salutron GCP Environment
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to destroy'
+        required: true
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
+      confirm:
+        description: 'Type the environment name to confirm destruction'
+        required: true
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  destroy:
+    name: Destroy ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Verify confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "${{ github.event.inputs.environment }}" ]; then
+            echo "❌ Confirmation does not match environment name!"
+            echo "You entered: '${{ github.event.inputs.confirm }}'"
+            echo "Expected: '${{ github.event.inputs.environment }}'"
+            exit 1
+          fi
+          echo "✅ Destruction confirmed for ${{ github.event.inputs.environment }}"
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Run Destroy Script
+        run: |
+          export GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
+          export GCP_REGION=${{ secrets.GCP_REGION }}
+
+          chmod +x terraform/gcp/scripts/destroy.sh
+          ./terraform/gcp/scripts/destroy.sh ${{ github.event.inputs.environment }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Destruction Complete
+        run: |
+          echo "✅ Environment ${{ github.event.inputs.environment }} has been destroyed!"
+          if [ "${{ github.event.inputs.environment }}" == "prod" ]; then
+            echo "⚠️  Don't forget to manually remove DNS records"
+          fi

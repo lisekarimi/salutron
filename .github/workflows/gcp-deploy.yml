@@ -1,0 +1,76 @@
+# .github/workflows/gcp-deploy.yml
+name: Deploy Salutron to GCP
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - test
+          - prod
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Authenticate Docker to Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev
+
+      - name: Run Deployment Script
+        run: |
+          export GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }}
+          export GCP_REGION=${{ secrets.GCP_REGION }}
+
+          chmod +x terraform/gcp/scripts/deploy.sh
+          ./terraform/gcp/scripts/deploy.sh ${{ github.event.inputs.environment }}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Get Deployment URLs
+        id: deploy_outputs
+        working-directory: ./terraform/gcp
+        run: |
+          terraform workspace select ${{ github.event.inputs.environment }}
+          echo "cloud_run_url=$(terraform output -raw cloud_run_url)" >> $GITHUB_OUTPUT
+          echo "artifact_registry=$(terraform output -raw artifact_registry_url)" >> $GITHUB_OUTPUT
+          echo "cloud_run_status=$(terraform output -raw cloud_run_status)" >> $GITHUB_OUTPUT
+
+      - name: Deployment Summary
+        run: |
+          echo "✅ Deployment Complete!"
+          echo "🚀 Cloud Run URL: ${{ steps.deploy_outputs.outputs.cloud_run_url }}"
+          echo "📦 Artifact Registry: ${{ steps.deploy_outputs.outputs.artifact_registry }}"
+          echo "📊 Status: ${{ steps.deploy_outputs.outputs.cloud_run_status }}"

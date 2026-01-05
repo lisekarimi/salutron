@@ -105,8 +105,9 @@ gcp-destroy-prod: ## Destroy GCP prod
 # =====================================
 # 🚀 GitHub Actions Setup
 # =====================================
+
 # =====================================
-# Prerequisites:
+# AWS Prerequisites:
 # Add these IAM policies to your AWS user:
 # - AmazonDynamoDBFullAccess_v2
 # - AmazonS3FullAccess
@@ -114,7 +115,7 @@ gcp-destroy-prod: ## Destroy GCP prod
 
 aws-setup-backend: ## Create S3 and DynamoDB for remote state (one-time)
 	@echo "🔐 Creating remote state backend..."
-	@cd terraform/ci-setup && \
+	@cd terraform/ci-setup/aws && \
 	terraform init -input=false && \
 	terraform apply \
 	  -target=aws_s3_bucket.terraform_state \
@@ -125,13 +126,40 @@ aws-setup-backend: ## Create S3 and DynamoDB for remote state (one-time)
 
 aws-setup-github-oidc: ## Setup GitHub OIDC for CI/CD (one-time)
 	@echo "🔐 Setting up GitHub OIDC..."
-	@cd terraform/ci-setup && \
+	@cd terraform/ci-setup/aws && \
 	terraform init -input=false && \
 	terraform apply -auto-approve
 	@echo ""
 	@echo "✅ GitHub OIDC setup complete!"
-	@cd terraform/ci-setup && terraform output github_actions_role_arn
+	@cd terraform/ci-setup/aws && terraform output github_actions_role_arn
 
+
+# =====================================
+# GCP Prerequisites:
+# - Authenticate with gcloud auth application-default login
+# - Create/set the GCP project
+# - Enable required APIs (storage.googleapis.com, iam.googleapis.com)
+# =====================================
+
+gcp-setup-backend: ## Create GCS bucket for Terraform state (one-time)
+	@echo "🔐 Creating GCP backend for Terraform state..."
+	@cd terraform/ci-setup/gcp && \
+	terraform init -input=false && \
+	terraform apply \
+	  -target=google_storage_bucket.terraform_state \
+	  -auto-approve
+	@echo "✅ GCP backend created successfully!"
+
+
+gcp-setup-github-workload-identity: ## Setup GCP Workload Identity for GitHub Actions (one-time)
+	@echo "🔐 Setting up GCP Workload Identity..."
+	@cd terraform/ci-setup/gcp && \
+	terraform init -input=false && \
+	terraform apply -auto-approve
+	@echo ""
+	@echo "✅ Workload Identity setup complete!"
+	@cd terraform/ci-setup/gcp && terraform output workload_identity_provider
+	@cd terraform/ci-setup/gcp && terraform output service_account_email
 
 # =====================================
 # Local Website
