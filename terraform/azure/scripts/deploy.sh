@@ -88,6 +88,12 @@ echo "✅ Image pushed to ${ACR_LOGIN_SERVER}/${PROJECT_NAME}:latest"
 echo "☁️  Step 3/3: Deploying Container App and full infrastructure..."
 cd "$SCRIPT_DIR/.."
 
+terraform init -input=false \
+  -backend-config="resource_group_name=salutron-rg" \
+  -backend-config="storage_account_name=salutronterraformstate" \
+  -backend-config="container_name=tfstate" \
+  -backend-config="key=azure-${ENVIRONMENT}.tfstate"
+
 terraform apply \
   -var="environment=$ENVIRONMENT" \
   -var="openai_api_key=$OPENAI_API_KEY" \
