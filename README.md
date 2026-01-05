@@ -247,6 +247,25 @@ make azure-setup-workload-identity
 
 ---
 
+## 🤔 Local vs GitHub Actions?
+
+| Scenario | Use | Why |
+|----------|-----|-----|
+| **Learning/Testing** | Local | Fast iterations, immediate feedback |
+| **Portfolio Projects** | Both | Shows CI/CD skills + practical knowledge |
+| **Team Projects** | GitHub Actions | Consistent deployments, no "works on my machine" |
+| **Production** | GitHub Actions | Audit trail, approvals, automated |
+
+**This Project:** Implements both methods to demonstrate enterprise deployment strategies.
+
+**Hybrid Pattern:**
+```
+Local: Dev testing (make aws-deploy-dev)
+GitHub Actions: Test/Prod (automated + protected)
+```
+
+---
+
 ## 📄 License
 
 MIT License - feel free to use this project for learning!
