@@ -63,4 +63,7 @@ jobs:
 
       - name: Destruction Complete
         run: |
-          echo "✅ Environment ${{ github.event.inputs.environ
+          echo "✅ Environment ${{ github.event.inputs.environment }} has been destroyed!"
+          if [ "${{ github.event.inputs.environment }}" == "prod" ]; then
+            echo "⚠️  Don't forget to manually remove DNS records from Cloudflare"
+          fi
