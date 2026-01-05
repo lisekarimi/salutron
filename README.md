@@ -44,7 +44,7 @@ Multi-environment (dev/test/prod) infrastructure with automated CI/CD pipelines,
 
 ### AWS Deployment
 
-#### Local Deployment
+#### 💻 Local Deployment
 
 **1️⃣ Create IAM User**
 Create `terraform_user` with these policies:
@@ -79,7 +79,7 @@ make aws-deploy-prod  # Production
 make aws-destroy-dev
 ```
 
-#### GitHub Actions CI/CD Setup
+#### ⚙️ GitHub Actions CI/CD Setup
 
 **1️⃣ Setup OIDC Authentication**
 ```bash
@@ -123,7 +123,7 @@ Traditional Access Keys ❌          OIDC (Recommended) ✅
 
 ### GCP Deployment
 
-#### Local Deployment
+#### 💻 Local Deployment
 
 **1️⃣ Initial GCP Setup**
 ```bash
@@ -148,7 +148,7 @@ make gcp-deploy-prod  # Production
 make gcp-destroy-dev
 ```
 
-#### GitHub Actions CI/CD Setup
+#### ⚙️ GitHub Actions CI/CD Setup
 
 **1️⃣ Setup Workload Identity Federation**
 ```bash
@@ -178,7 +178,7 @@ Go to GitHub repo → Settings → Secrets and variables → Actions:
 
 ### Azure Deployment
 
-#### Local Deployment
+#### 💻 Local Deployment
 
 **1️⃣ Install Azure CLI**
 ```bash
@@ -209,7 +209,7 @@ make azure-deploy-prod  # Production
 make azure-destroy-dev
 ```
 
-#### GitHub Actions CI/CD Setup
+#### ⚙️ GitHub Actions CI/CD Setup
 
 **1️⃣ Setup Workload Identity Federation**
 ```bash
@@ -243,7 +243,6 @@ make azure-setup-workload-identity
 | **CI/CD Auth** | OIDC | Workload Identity | Workload Identity Federation |
 | **State Storage** | S3 + DynamoDB | Cloud Storage (built-in locking) | Blob Storage + Container |
 | **Min Instances** | 1 | 0 (scale to zero) | 1 (with ingress) |
-| **Pricing Model** | Pay per request | Pay per 100ms | Pay per request |
 
 ---
 
