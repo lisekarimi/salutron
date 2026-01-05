@@ -1,206 +1,180 @@
 # Salutron 👋
 
-A production-ready DevOps project demonstrating enterprise-level Infrastructure as Code practices with Terraform, Docker, and AWS.
+Production-ready multi-cloud Infrastructure as Code demonstrating enterprise DevOps practices with Terraform, Docker, AWS, and GCP.
 
-> **What makes this special?** Deploy complete multi-environment infrastructure with a single command. Full automation from build to production.
+Learn more: [salutron.lisekarimi.com](https://salutron.lisekarimi.com)
 
-## 🎯 Project Goals
+## 🎯 Overview
 
-This project demonstrates:
-- ✅ Multi-environment infrastructure (dev/test/prod)
-- ✅ One-command deployment and teardown
-- ✅ Enterprise-level automation with Bash + Makefiles
-- ✅ Secure secret management
-- ✅ Production-ready DevOps workflow
+Multi-environment (dev/test/prod) infrastructure with automated CI/CD pipelines, demonstrating:
+- Single-command deployment/teardown across AWS and GCP
+- OIDC/Workload Identity Federation for secure GitHub Actions
+- Remote state management with workspace isolation
+- Docker containerization with optimized builds
 
 ## 📋 Prerequisites
 
-**Skills assumed:**
-- Familiarity with Docker
-- Basic AWS knowledge
-- AWS CLI configured
-- Understanding of Makefiles
+**Required:**
+- Docker, Terraform ≥1.0, AWS CLI v2, gcloud CLI, Python 3.11+, Make
+- AWS account with IAM user configured
+- GCP project with billing enabled
+- GitHub repository with Actions enabled
 
-**Tools required:**
-- Docker Desktop
-- Terraform >= 1.0
-- AWS CLI v2
-- Python 3.11+
-- Make
-
-
-## 🌐 AWS vs GCP Comparison
-
-| AWS | GCP Equivalent |
-|-----|----------------|
-| App Runner | Cloud Run |
-| ECR (Elastic Container Registry) | Artifact Registry |
-| S3 (Simple Storage Service) | Cloud Storage |
-| IAM Roles | Service Accounts |
-
-## 🚀 Key Features
-
-### Multi-Environment Infrastructure
-- 3 isolated environments using Terraform workspaces
-- Single codebase for all environments
-- Independent state management per environment
-
-### One-Command Automation
-```bash
-make deploy-dev   # Build → Push → Deploy
-make deploy-prod  # Deploy to production
-make destroy-dev  # Complete teardown
-```
-
-### Enterprise Practices
-- Automated deployment orchestration
-- Secure environment variable management
-- Docker image optimization with UV
-- Zero manual AWS Console interaction
-
-### Production-Ready Configuration
-- Custom domain support (prod environment)
-- Environment-specific scaling (dev: 1-2, prod: 2-5 instances)
-- Production configuration via `prod.tfvars`
-- Automatic SSL/TLS certificate management
+**Skills:**
+- Terraform, Docker, Bash scripting, CI/CD concepts
 
 ## 🛠️ Tech Stack
 
-| Technology | Purpose |
-|------------|---------|
-| **Terraform** | Infrastructure as Code with workspace management |
-| **Docker** | Containerization with optimized builds |
-| **AWS App Runner** | Serverless container deployment |
-| **AWS ECR** | Container registry |
-| **OpenAI GPT-4** | AI-powered greetings |
-| **Bash + Make** | Deployment automation |
+| Component | AWS | GCP |
+|-----------|-----|-----|
+| Compute | App Runner | Cloud Run |
+| Registry | ECR | Artifact Registry |
+| Storage | S3 | Cloud Storage |
+| Auth | IAM + OIDC | Service Accounts + Workload Identity |
+| State | S3 + DynamoDB | Cloud Storage |
 
 
+## 🚀 Deployment Guide
 
-## 🔐 AWS Setup
+### AWS Deployment
 
-### 1. Create IAM User for Terraform
+#### Local Deployment
 
-Create a dedicated IAM user (e.g., `terraform_user`) with these policies:
-```
-✅ AmazonEC2ContainerRegistryFullAccess  - Manage Docker images in ECR
-✅ IAMFullAccess                          - Create IAM roles for App Runner
-✅ AWSAppRunnerFullAccess                 - Deploy App Runner services
-✅ AmazonS3FullAccess                     - Manage S3 buckets
-```
+**1. Create IAM User**
+Create `terraform_user` with these policies:
+- `AmazonEC2ContainerRegistryFullAccess`
+- `IAMFullAccess`
+- `AWSAppRunnerFullAccess`
+- `AmazonS3FullAccess`
 
-### 2. Configure AWS CLI
+**2. Configure AWS CLI**
 ```bash
 aws configure
-# Enter your terraform_user credentials
+# Enter terraform_user credentials
 ```
 
-## 📦 One-Time Backend Setup (Before GitHub Actions)
-
-Remote state storage is required for GitHub Actions and team collaboration.
-
-**Run once:**
+**3. Setup Remote State Backend (One-Time)**
 ```bash
 make aws-setup-backend
 ```
 
-**Then archive the setup file:**
+**4. Deploy to Environment**
 ```bash
-mv terraform/aws/backend-setup.tf terraform/aws/archive/
+make aws-deploy-dev   # Development
+make aws-deploy-test  # Testing
+make aws-deploy-prod  # Production
 ```
 
-**Why archive?** Keeps the file for reference but prevents accidental modification of production backend resources.
-```
-
-## **In `.gitignore` add:**
-```
-# Don't ignore archive folder - keep for reference
-!terraform/aws/archive/
-
-## 🚀 Quick Start
-
-### 1. Clone & Setup
+**5. Destroy Environment**
 ```bash
-git clone https://github.com/lisekarimi/salutron.git
-cd salutron
+make aws-destroy-dev
 ```
 
-### 2. Configure Environment
+#### GitHub Actions CI/CD Setup
+
+**1. Setup OIDC Authentication**
 ```bash
-# Copy example env file
-cp .env.example .env
-
-# Edit .env and add your OpenAI API key
-OPENAI_API_KEY=sk-your-key-here
+make aws-setup-github-oidc
+# Save the output: github_actions_role_arn
 ```
 
-### 3. Deploy!
+**2. Add GitHub Secrets**
+Go to GitHub repo → Settings → Secrets and variables → Actions:
+- `AWS_ROLE_ARN`: `arn:aws:iam::YOUR_ACCOUNT:role/github-actions-salutron-deploy`
+- `DEFAULT_AWS_REGION`: `us-east-1`
+- `AWS_ACCOUNT_ID`: Your 12-digit AWS account ID
+- `OPENAI_API_KEY`: Your OpenAI API key
+
+**3. Deploy via GitHub Actions**
+- Go to Actions tab → "Deploy Salutron"
+- Click "Run workflow"
+- Select environment (dev/test/prod)
+
+**Why OIDC Instead of Access Keys?**
+
+```
+Traditional Access Keys ❌          OIDC (Recommended) ✅
+├─ Permanent credentials           ├─ Temporary tokens (~1 hour)
+├─ Manual rotation needed          ├─ Auto-rotates each run
+├─ Security risk if leaked         ├─ No credentials stored
+└─ Hard to audit                   └─ Full audit trail
+```
+
+**How OIDC Works:**
+```
+┌─────────────┐                    ┌─────────────┐
+│   GitHub    │ 1. JWT token      │     AWS     │
+│   Actions   ├──────────────────>│   verifies  │
+│             │ 2. Temp creds     │   identity  │
+│             │<──────────────────┤             │
+└─────────────┘                    └─────────────┘
+```
+
+### GCP Deployment
+
+#### Local Deployment
+
+**1. Initial GCP Setup**
 ```bash
-# Deploy to development
-make deploy-dev
-
-# Deploy to production
-make deploy-prod
-
-# Destroy environment
-make destroy-dev
+make gcp-setup
+# Authenticates and enables required APIs
 ```
 
-That's it! The entire infrastructure is built and deployed automatically.
+**2. Setup Remote State Backend (One-Time)**
+```bash
+make gcp-setup-backend
+```
 
-## 🌐 Custom Domain Setup (Production)
+**3. Deploy to Environment**
+```bash
+make gcp-deploy-dev   # Development
+make gcp-deploy-test  # Testing
+make gcp-deploy-prod  # Production
+```
 
-Production deployments support custom domains:
+**4. Destroy Environment**
+```bash
+make gcp-destroy-dev
+```
 
-1. **Update `terraform/aws/prod.tfvars`:**
-   ```hcl
-   custom_domain = "your-subdomain.yourdomain.com"
-   ```
+#### GitHub Actions CI/CD Setup
 
-2. **Deploy to production:**
-   ```bash
-   make deploy-prod
-   ```
+**1. Setup Workload Identity Federation**
+```bash
+make gcp-setup-workload-identity
+# Save both outputs:
+# - workload_identity_provider
+# - service_account_email
+```
 
-3. **Get DNS records:**
-   ```bash
-   cd terraform/aws
-   terraform output custom_domain_dns_records
-   ```
+**2. Add GitHub Secrets**
+Go to GitHub repo → Settings → Secrets and variables → Actions:
+- `GCP_PROJECT_ID`: `salutron`
+- `GCP_WORKLOAD_IDENTITY_PROVIDER`: `projects/280220662544/locations/global/...`
+- `GCP_SERVICE_ACCOUNT`: `github-actions-sa@salutron.iam.gserviceaccount.com`
+- `GCP_REGION`: `us-central1`
+- `OPENAI_API_KEY`: Your OpenAI API key
 
-4. **Add CNAME records to your DNS provider** (Cloudflare, Route53, etc.)
+**3. Deploy via GitHub Actions**
+- Go to Actions tab → "Deploy Salutron to GCP"
+- Click "Run workflow"
+- Select environment (dev/test/prod)
 
-5. **Wait 5-10 minutes** for SSL certificate validation
+**GCP Workload Identity = AWS OIDC**
+Same concept, different name. No long-lived service account keys needed!
 
-Your app will be available at your custom domain with automatic HTTPS!
+## 🌐 AWS vs GCP Comparison
 
-## 🎓 What You'll Learn
+| Feature | AWS | GCP |
+|---------|-----|-----|
+| **Container Service** | App Runner | Cloud Run |
+| **Container Registry** | ECR | Artifact Registry |
+| **Object Storage** | S3 | Cloud Storage |
+| **Authentication** | IAM Roles | Service Accounts |
+| **CI/CD Auth** | OIDC | Workload Identity Federation |
+| **State Storage** | S3 + DynamoDB | Cloud Storage (GCS) |
 
-### Infrastructure as Code
-- Terraform workspace management
-- Multi-environment deployments
-- Resource dependencies
-- State management
 
-### Containerization
-- Docker multi-stage builds
-- ECR repository management
-- Image optimization
-- Security best practices
-
-### AWS Services
-- App Runner serverless containers
-- ECR container registry
-- S3 object storage
-- IAM roles and policies
-
-### DevOps Automation
-- Bash scripting for orchestration
-- Makefile automation
-- Secret management
-- CI/CD workflows
-- Custom domain configuration with SSL
-- Environment-specific resource scaling
 
 ## 📄 License
 
@@ -212,67 +186,6 @@ MIT License - feel free to use this project for learning!
 - Portfolio: [lisekarimi.com](https://lisekarimi.com)
 - GitHub: [@lisekarimi](https://github.com/lisekarimi)
 
----
-
 Built with ❤️ while learning DevOps
 
-**⭐ Star this repo if it helped you learn Terraform and AWS!**
-
-
-Traditional Approach (Access Keys) - The Old Way ❌
-yaml# You would store these in GitHub Secrets:
-AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE
-AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-Problems with this approach:
-
-Security Risk: Long-lived credentials that never expire
-Hard to Rotate: You need to manually update secrets when rotating keys
-Broad Access: If leaked, attackers have full access until you revoke them
-Compliance Issues: Many security standards discourage long-lived credentials
-No Audit Trail: Harder to track which specific GitHub Action run did what
-
-# GitHub Actions workflow
-- name: Configure AWS Credentials
-  uses: aws-actions/configure-aws-credentials@v4
-  with:
-    role-to-assume: arn:aws:iam::123456789:role/github-actions-role
-    aws-region: us-east-1
-```
-
-**Benefits:**
-1. **Short-Lived Tokens**: AWS creates temporary credentials (valid for ~1 hour)
-2. **No Stored Secrets**: No access keys in GitHub Secrets
-3. **Automatic Rotation**: New token on every workflow run
-4. **Granular Control**: Can restrict which repos/branches can assume the role
-5. **Better Audit Trail**: CloudTrail logs show exactly which GitHub Action assumed the role
-
-## How OIDC Works (Simplified)
-```
-┌─────────────┐                    ┌─────────────┐
-│   GitHub    │                    │     AWS     │
-│   Actions   │                    │             │
-└──────┬──────┘                    └──────┬──────┘
-       │                                  │
-       │ 1. "Hi, I'm GitHub repo X"      │
-       │    (sends JWT token)             │
-       ├─────────────────────────────────>│
-       │                                  │
-       │                                  │ 2. Verifies token
-       │                                  │    with GitHub's
-       │                                  │    public keys
-       │                                  │
-       │ 3. "Here are temporary          │
-       │     AWS credentials"             │
-       │<─────────────────────────────────┤
-       │                                  │
-       │ 4. Uses credentials to          │
-       │    deploy infrastructure         │
-       ├─────────────────────────────────>│
-       │                                  │
-
-OIDC provides:
-
-Zero Trust Security: No permanent credentials to steal
-Principle of Least Privilege: Credentials expire after use
-Compliance: Meets SOC2, ISO27001, and other security frameworks
-Cost: Free! No additional AWS charges
+**⭐ Star this repo if it helped you learn Terraform and AWS/GCP!**

@@ -9,175 +9,51 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Hero Section -->
+    <!-- Hero -->
     <section class="hero">
         <div class="hero-emoji">👋</div>
         <h1>Salutron</h1>
-        <p>Production-ready DevOps project demonstrating Terraform, Docker, and AWS deployment with enterprise-level automation</p>
-        <div class="cta-buttons">
-            <a href="https://github.com/lisekarimi/salutron" class="btn btn-primary" target="_blank">
-                💻 View on GitHub
-            </a>
-        </div>
+        <p>Production multi-cloud infrastructure with automated CI/CD and zero-credential authentication</p>
+        <a href="https://github.com/lisekarimi/salutron" class="btn btn-primary" target="_blank">💻 View on GitHub</a>
+    </section>
+
+    <!-- Value Bar -->
+    <section class="value-bar">
+        <div class="value-item"><span class="value-number">3</span><span class="value-label">Clouds (AWS/GCP/Azure)</span></div>
+        <div class="value-item"><span class="value-number">OIDC</span><span class="value-label">Zero Secrets</span></div>
+        <div class="value-item"><span class="value-number">1-CMD</span><span class="value-label">Full Deploy</span></div>
+        <div class="value-item"><span class="value-number">Dev/Test/Prod</span><span class="value-label">Workspaces</span></div>
     </section>
 
     <!-- Main Content -->
     <div class="container">
-        <!-- About Section -->
+        <!-- Stack -->
         <section class="section">
-            <h2>About This Project</h2>
-            <p>
-                A professional DevOps project built to master Terraform, Docker, and AWS deployment.<br>
-                This project demonstrates enterprise-level Infrastructure as Code practices with full automation and multi-environment support.
-            </p>
-        </section>
-
-        <!-- Key Features - NEW SECTION -->
-        <section class="section">
-            <h2>🚀 Key Professional Features</h2>
-            <div class="features">
-                <div class="feature highlight">
-                    <h3>🏗️ Multi-Environment Infrastructure</h3>
-                    <ul>
-                        <li>3 isolated environments (dev/test/prod)</li>
-                        <li>Terraform workspaces for state management</li>
-                        <li>One codebase, multiple deployments</li>
-                        <li>Production-ready architecture</li>
-                    </ul>
-                </div>
-                <div class="feature highlight">
-                    <h3>⚡ One-Command Deployment</h3>
-                    <ul>
-                        <li><code>make deploy-dev</code> - Complete deployment</li>
-                        <li><code>make destroy-dev</code> - Complete teardown</li>
-                        <li>Fully automated: build → push → deploy</li>
-                        <li>Zero manual AWS Console interaction</li>
-                    </ul>
-                </div>
-                <div class="feature highlight">
-                    <h3>🔧 Enterprise Automation</h3>
-                    <ul>
-                        <li>Bash scripts for deployment orchestration</li>
-                        <li>Makefile for developer experience</li>
-                        <li>End-to-end CI/CD workflow</li>
-                        <li>Repeatable and consistent deployments</li>
-                    </ul>
-                </div>
-                <div class="feature highlight">
-                    <h3>🔐 Secure Secret Management</h3>
-                    <ul>
-                        <li>Environment variables via .env files</li>
-                        <li>Secrets never committed to Git</li>
-                        <li>Terraform sensitive variables</li>
-                        <li>Production-grade security practices</li>
-                    </ul>
-                </div>
-                <div class="feature highlight">
-                    <h3>🌐 Production-Ready Configuration</h3>
-                    <ul>
-                        <li>Custom domain support with SSL/TLS</li>
-                        <li>Environment-specific auto-scaling</li>
-                        <li>Production configuration via prod.tfvars</li>
-                        <li>Automatic certificate management</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- Tech Stack -->
-        <section class="section">
-            <h2>Tech Stack</h2>
+            <h2>🛠️ Stack</h2>
             <div class="tech-grid">
-                <div class="tech-card">
-                    <div class="icon">🏗️</div>
-                    <h3>Terraform</h3>
-                    <p>Infrastructure as Code with multi-environment workspaces (dev/test/prod)</p>
-                </div>
-                <div class="tech-card">
-                    <div class="icon">🐳</div>
-                    <h3>Docker</h3>
-                    <p>Containerized application with optimized builds using UV</p>
-                </div>
-                <div class="tech-card">
-                    <div class="icon">☁️</div>
-                    <h3>AWS App Runner</h3>
-                    <p>Serverless container deployment with auto-scaling and HTTPS</p>
-                </div>
-                <div class="tech-card">
-                    <div class="icon">🤖</div>
-                    <h3>OpenAI GPT-4</h3>
-                    <p>AI-powered greetings that are unique every time</p>
-                </div>
+                <div class="tech-card"><div class="icon">🏗️</div><h3>Terraform</h3><p>Multi-cloud IaC with remote state</p></div>
+                <div class="tech-card"><div class="icon">🔄</div><h3>GitHub Actions</h3><p>OIDC/Workload Identity auth</p></div>
+                <div class="tech-card"><div class="icon">🐳</div><h3>Docker</h3><p>Optimized multi-stage builds</p></div>
+                <div class="tech-card"><div class="icon">☁️</div><h3>CaaS</h3><p>App Runner / Cloud Run / Container Apps</p></div>
             </div>
         </section>
 
-        <!-- What I Learned -->
+        <!-- What's Different -->
         <section class="section">
-            <h2>What I Learned</h2>
-            <div class="features">
-                <div class="feature">
-                    <h3>🏗️ Infrastructure as Code</h3>
-                    <ul>
-                        <li>Terraform workspace management</li>
-                        <li>Multi-environment deployments</li>
-                        <li>Resource dependencies & outputs</li>
-                        <li>State management best practices</li>
-                    </ul>
-                </div>
-                <div class="feature">
-                    <h3>🐳 Containerization</h3>
-                    <ul>
-                        <li>Docker multi-stage builds</li>
-                        <li>ECR repository management</li>
-                        <li>Image optimization techniques</li>
-                        <li>Container security practices</li>
-                    </ul>
-                </div>
-                <div class="feature">
-                    <h3>☁️ AWS Services</h3>
-                    <ul>
-                        <li>App Runner for serverless containers</li>
-                        <li>ECR for container registry</li>
-                        <li>S3 for object storage (learning)</li>
-                        <li>IAM roles and permissions</li>
-                        <li>Custom domain configuration </li>
-                        <li>SSL/TLS certificate automation</li>
-                    </ul>
-                </div>
-                <div class="feature">
-                    <h3>🔧 DevOps Automation</h3>
-                    <ul>
-                        <li>Bash scripting for deployment orchestration</li>
-                        <li>Makefile for command automation</li>
-                        <li>Secret management with env variables</li>
-                        <li>Git workflow and version control</li>
-                    </ul>
-                </div>
-            </div>
+            <h2>⚡ Enterprise Patterns</h2>
+            <ul class="big-bullets">
+                <li><strong>Multi-cloud parity:</strong> Identical workflows across AWS/GCP/Azure</li>
+                <li><strong>Zero stored credentials:</strong> OIDC/Workload Identity Federation</li>
+                <li><strong>Workspace isolation:</strong> dev/test/prod with independent state</li>
+                <li><strong>One-command deploy:</strong> <code>make aws-deploy-prod</code> → production</li>
+            </ul>
         </section>
 
-        <!-- Architecture -->
-        <section class="section">
-            <h2>Architecture & Deployment</h2>
-            <p>
-                Complete automated deployment workflow - from code to production in one command:
-            </p>
-            <div class="architecture-flow">
-                <div class="feature">
-                    <h3>🔄 Automated Deployment Flow</h3>
-                    <ul>
-                        <li>Build Docker image with Python + Flask + OpenAI</li>
-                        <li>Login to ECR and push container image</li>
-                        <li>Terraform creates infrastructure (App Runner, ECR, IAM, S3*)</li>
-                        <li>App Runner pulls image and deploys automatically</li>
-                        <li>Auto-scaling based on traffic</li>
-                        <li>HTTPS endpoint configured automatically</li>
-                    </ul>
-                    <p style="font-size: 0.9em; color: #888; margin-top: 15px;">
-                        *S3 bucket created for learning Terraform resource management
-                    </p>
-                </div>
-            </div>
+        <!-- CTA -->
+        <section class="section cta-section">
+            <h2>🚀 Ready to Deploy</h2>
+            <p class="cta-text">Complete workflows, Terraform modules, automation scripts.<br><strong>Clone and deploy in 5 minutes.</strong></p>
+            <a href="https://github.com/lisekarimi/salutron" class="btn btn-primary-large" target="_blank">⭐ Star on GitHub</a>
         </section>
     </div>
 
