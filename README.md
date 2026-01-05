@@ -1,13 +1,13 @@
 # Salutron 👋
 
-Production-ready multi-cloud Infrastructure as Code demonstrating enterprise DevOps practices with Terraform, Docker, AWS, and GCP.
+Production-ready multi-cloud Infrastructure as Code demonstrating enterprise DevOps practices with Terraform, Docker, AWS, GCP, and Azure.
 
 Learn more: [salutron.lisekarimi.com](https://salutron.lisekarimi.com)
 
 ## 🎯 Overview
 
 Multi-environment (dev/test/prod) infrastructure with automated CI/CD pipelines, demonstrating:
-- Single-command deployment/teardown across AWS and GCP
+- Single-command deployment/teardown across **AWS, GCP, and Azure**
 - OIDC/Workload Identity Federation for secure GitHub Actions
 - Remote state management with workspace isolation
 - Docker containerization with optimized builds
@@ -15,9 +15,10 @@ Multi-environment (dev/test/prod) infrastructure with automated CI/CD pipelines,
 ## 📋 Prerequisites
 
 **Required:**
-- Docker, Terraform ≥1.0, AWS CLI v2, gcloud CLI, Python 3.11+, Make
+- Docker, Terraform ≥1.0, AWS CLI v2, gcloud CLI, **Azure CLI**, Python 3.11+, Make
 - AWS account with IAM user configured
 - GCP project with billing enabled
+- **Azure subscription with resource group**
 - GitHub repository with Actions enabled
 
 **Skills:**
@@ -25,13 +26,13 @@ Multi-environment (dev/test/prod) infrastructure with automated CI/CD pipelines,
 
 ## 🛠️ Tech Stack
 
-| Component | AWS | GCP |
-|-----------|-----|-----|
-| Compute | App Runner | Cloud Run |
-| Registry | ECR | Artifact Registry |
-| Storage | S3 | Cloud Storage |
-| Auth | IAM + OIDC | Service Accounts + Workload Identity |
-| State | S3 + DynamoDB | Cloud Storage |
+| Component | AWS | GCP | Azure |
+|-----------|-----|-----|-------|
+| Compute | App Runner | Cloud Run | Container Apps |
+| Registry | ECR | Artifact Registry | ACR |
+| Storage | S3 | Cloud Storage | Blob Storage |
+| Auth | IAM + OIDC | Service Accounts + Workload Identity | Service Principal + Workload Identity |
+| State | S3 + DynamoDB | Cloud Storage | Blob Storage |
 
 
 ## 🚀 Deployment Guide
@@ -171,16 +172,72 @@ Go to GitHub repo → Settings → Secrets and variables → Actions:
 **GCP Workload Identity = AWS OIDC**
 Same concept, different name. No long-lived service account keys needed!
 
-## 🌐 AWS vs GCP Comparison
+### Azure Deployment
 
-| Feature | AWS | GCP |
-|---------|-----|-----|
-| **Container Service** | App Runner | Cloud Run |
-| **Container Registry** | ECR | Artifact Registry |
-| **Object Storage** | S3 | Cloud Storage |
-| **Authentication** | IAM Roles | Service Accounts |
-| **CI/CD Auth** | OIDC | Workload Identity Federation |
-| **State Storage** | S3 + DynamoDB | Cloud Storage (GCS) |
+#### Local Deployment
+
+**1. Install Azure CLI**
+```bash
+az --version
+az login
+```
+
+**2. Initial Azure Setup**
+```bash
+make azure-setup
+# Registers required resource providers
+```
+
+**3. Setup Remote State Backend (One-Time)**
+```bash
+make azure-setup-backend
+```
+
+**4. Deploy to Environment**
+```bash
+make azure-deploy-dev   # Development
+make azure-deploy-test  # Testing
+make azure-deploy-prod  # Production
+```
+
+**5. Destroy Environment**
+```bash
+make azure-destroy-dev
+```
+
+#### GitHub Actions CI/CD Setup
+
+**1. Setup Workload Identity Federation**
+```bash
+make azure-setup-workload-identity
+# Save the outputs: client_id, tenant_id, subscription_id
+```
+
+**2. Add GitHub Secrets**
+- `AZURE_CLIENT_ID`: Service principal client ID
+- `AZURE_TENANT_ID`: Azure tenant ID
+- `AZURE_SUBSCRIPTION_ID`: Azure subscription ID
+- `AZURE_RESOURCE_GROUP`: `salutron-rg`
+- `AZURE_REGION`: `francecentral`
+- `OPENAI_API_KEY`: Your OpenAI API key
+
+**3. Deploy via GitHub Actions**
+- Actions → "Deploy Salutron to Azure"
+- Click "Run workflow"
+- Select environment
+
+## 🌐 Multi-Cloud Comparison
+
+| Feature | AWS | GCP | Azure |
+|---------|-----|-----|-------|
+| **Container Service** | App Runner | Cloud Run | Container Apps |
+| **Container Registry** | ECR | Artifact Registry | ACR (Azure Container Registry) |
+| **Object Storage** | S3 | Cloud Storage | Blob Storage |
+| **Authentication** | IAM Roles | Service Accounts | Service Principals |
+| **CI/CD Auth** | OIDC | Workload Identity | Workload Identity Federation |
+| **State Storage** | S3 + DynamoDB | Cloud Storage (built-in locking) | Blob Storage + Container |
+| **Min Instances** | 1 | 0 (scale to zero) | 1 (with ingress) |
+| **Pricing Model** | Pay per request | Pay per 100ms | Pay per request |
 
 
 
@@ -196,16 +253,4 @@ MIT License - feel free to use this project for learning!
 
 Built with ❤️ while learning DevOps
 
-**⭐ Star this repo if it helped you learn Terraform and AWS/GCP!**
-
-
-Azure Account (Your Email)
-  └── Subscription (e.g., "Azure for Students")
-      └── Resource Group (e.g., "cyber-analyzer-rg")
-          └── Resources (Container Apps, Registry, etc.)
-
-            Install Azure cli
-            az --version
-            az login
-            az account list --output table
-            az group list --output table
+**⭐ Star this repo if it helped you learn Terraform and AWS/GCP/Azure!**
