@@ -2,6 +2,8 @@
 
 Production-ready multi-cloud Infrastructure as Code demonstrating enterprise DevOps practices with Terraform, Docker, AWS, GCP, and Azure.
 
+![Workflow](https://github.com/lisekarimi/salutron/blob/main/assets/wrokflow.png?raw=true)
+
 Learn more: [salutron.lisekarimi.com](https://salutron.lisekarimi.com)
 
 ## 🎯 Overview

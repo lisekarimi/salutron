@@ -7,6 +7,82 @@
     <meta name="description" content="AI-powered greeting app built to learn Terraform, Docker, and AWS infrastructure">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👋</text></svg>">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Workflow Image Zoom Styles */
+        .workflow-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            text-align: center;
+        }
+
+        .workflow-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            cursor: zoom-in;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .workflow-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Modal for zoomed image */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            cursor: zoom-out;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .image-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-modal-content {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+            border-radius: 10px;
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 40px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1001;
+            transition: transform 0.2s;
+        }
+
+        .image-modal-close:hover {
+            transform: scale(1.2);
+        }
+    </style>
 </head>
 <body>
     <!-- Hero -->
@@ -49,6 +125,20 @@
             </ul>
         </section>
 
+        <!-- Workflow Diagram -->
+        <section class="section">
+            <h2>🔄 Deployment Workflow</h2>
+            <p>Click the image to zoom and explore the complete CI/CD pipeline</p>
+            <div class="workflow-container">
+                <img
+                    src="https://github.com/lisekarimi/salutron/blob/main/assets/wrokflow.png?raw=true"
+                    alt="Salutron Deployment Workflow"
+                    class="workflow-image"
+                    id="workflowImage"
+                >
+            </div>
+        </section>
+
         <!-- CTA -->
         <section class="section cta-section">
             <h2>🚀 Ready to Deploy</h2>
@@ -69,5 +159,48 @@
             </a>
         </div>
     </footer>
+
+    <!-- Image Modal for Zoom -->
+    <div class="image-modal" id="imageModal">
+        <span class="image-modal-close" id="closeModal">&times;</span>
+        <img class="image-modal-content" id="modalImage" alt="Zoomed Workflow">
+    </div>
+
+    <script>
+        // Workflow image zoom functionality
+        const workflowImage = document.getElementById('workflowImage');
+        const imageModal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+        const closeModal = document.getElementById('closeModal');
+
+        // Open modal on image click
+        workflowImage.addEventListener('click', function() {
+            modalImage.src = this.src;
+            imageModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        });
+
+        // Close modal on close button click
+        closeModal.addEventListener('click', function() {
+            imageModal.classList.remove('active');
+            document.body.style.overflow = ''; // Restore scrolling
+        });
+
+        // Close modal on background click
+        imageModal.addEventListener('click', function(e) {
+            if (e.target === imageModal) {
+                imageModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && imageModal.classList.contains('active')) {
+                imageModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
 </body>
 </html>
