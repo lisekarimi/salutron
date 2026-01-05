@@ -32,5 +32,6 @@ gcloud services enable run.googleapis.com
 gcloud services enable artifactregistry.googleapis.com
 gcloud services enable storage.googleapis.com
 gcloud services enable iam.googleapis.com
+gcloud services enable cloudresourcemanager.googleapis.com
 
 echo "🎉 Setup complete! Ready for Terraform."
