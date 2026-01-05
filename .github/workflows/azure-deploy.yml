@@ -43,10 +43,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Azure Container Registry Login
-        run: |
-          az acr login --name salutron${{ github.event.inputs.environment }}acr
-
       - name: Run Deployment Script
         run: |
           export AZURE_RESOURCE_GROUP=${{ secrets.AZURE_RESOURCE_GROUP }}
