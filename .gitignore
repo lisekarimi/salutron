@@ -21,3 +21,5 @@ terraform.tfstate.d/
 *.tfvars
 !terraform.tfvars
 !prod.tfvars
+
+.vscode/
