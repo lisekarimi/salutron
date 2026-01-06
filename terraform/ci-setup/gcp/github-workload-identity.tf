@@ -6,7 +6,7 @@
 variable "github_repository" {
   description = "GitHub repository in format 'owner/repo'"
   type        = string
-  default     = "lisekarimi/salutron"
+  default     = "lisekarimi/salutron" # adjust this to your repository
 }
 
 variable "project_id" {

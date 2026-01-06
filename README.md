@@ -69,19 +69,24 @@ aws configure
 make aws-setup-backend
 ```
 
-**4️⃣ Deploy to Environment**
+**4️⃣ Update Terraform Variables**
+> **⚠️ IMPORTANT:** Before deploying, update `terraform/aws/terraform.tfvars` and environment-specific files (e.g., `prod.tfvars`) with your own data (project name, region, custom domain, etc.).
+
+**5️⃣ Deploy to Environment**
 ```bash
 make aws-deploy-dev   # Development
 make aws-deploy-test  # Testing
 make aws-deploy-prod  # Production
 ```
 
-**5️⃣ Destroy Environment**
+**6️⃣ Destroy Environment**
 ```bash
 make aws-destroy-dev
 ```
 
 #### ⚙️ GitHub Actions CI/CD Setup
+
+> **⚠️ IMPORTANT:** Before proceeding, make sure to adjust the repository name in `terraform/ci-setup/aws/github-oidc.tf` (variable `github_repository`) to match your own repository in the format `owner/repo`.
 
 **1️⃣ Setup OIDC Authentication**
 ```bash
@@ -138,7 +143,10 @@ make gcp-setup
 make gcp-setup-backend
 ```
 
-**3️⃣ Deploy to Environment**
+**3️⃣ Update Terraform Variables**
+> **⚠️ IMPORTANT:** Before deploying, update `terraform/gcp/terraform.tfvars` and environment-specific files with your own data (project ID, project name, region, etc.).
+
+**4️⃣ Deploy to Environment**
 ```bash
 make gcp-deploy-dev   # Development
 make gcp-deploy-test  # Testing
@@ -151,6 +159,8 @@ make gcp-destroy-dev
 ```
 
 #### ⚙️ GitHub Actions CI/CD Setup
+
+> **⚠️ IMPORTANT:** Before proceeding, make sure to adjust the repository name in `terraform/ci-setup/gcp/github-workload-identity.tf` (variable `github_repository`) to match your own repository in the format `owner/repo`.
 
 **1️⃣ Setup Workload Identity Federation**
 ```bash
@@ -199,19 +209,24 @@ make azure-setup
 make azure-setup-backend
 ```
 
-**4️⃣ Deploy to Environment**
+**4️⃣ Update Terraform Variables**
+> **⚠️ IMPORTANT:** Before deploying, update `terraform/azure/terraform.tfvars` and environment-specific files with your own data (project name, region, resource group name, etc.).
+
+**5️⃣ Deploy to Environment**
 ```bash
 make azure-deploy-dev   # Development
 make azure-deploy-test  # Testing
 make azure-deploy-prod  # Production
 ```
 
-**5️⃣ Destroy Environment**
+**6️⃣ Destroy Environment**
 ```bash
 make azure-destroy-dev
 ```
 
 #### ⚙️ GitHub Actions CI/CD Setup
+
+> **⚠️ IMPORTANT:** Before proceeding, make sure to adjust the repository name in `terraform/ci-setup/azure/github-workload-identity.tf` (variable `github_repository`) to match your own repository in the format `owner/repo`.
 
 **1️⃣ Setup Workload Identity Federation**
 ```bash
